@@ -49,6 +49,7 @@
             NotesGrid.RowHeadersWidth = 62;
             NotesGrid.Size = new Size(1023, 658);
             NotesGrid.TabIndex = 0;
+            NotesGrid.CellClick += NotesGrid_CellClick;
             // 
             // NewNoteBtn
             // 

@@ -24,7 +24,7 @@ namespace Data.Repositories
             try
             {
                 string query = @"INSERT INTO Subcategories 
-                (Name) VALUES (@Name)";
+                (Name, CategoryId) VALUES (@Name, @CategoryId)";
 
                 using (IDbConnection connection = new SqlConnection(ConnectionHelper.ConnectionString))
                 {

@@ -1,3 +1,4 @@
+using Data.CustomQueryResults;
 using Data.Interfaces;
 using Data.Repositories;
 using Domain.Models;
@@ -22,22 +23,24 @@ namespace NotesApp
             _categoriesRepository = categoriesRepository;
             _subcategoriesRepository = subcategoriesRepository;
         }
-
+        private async void RefreshCategories()
+        {
+            CategoryCbx.DataSource = await _categoriesRepository.SelectCategories();
+            CategoryCbx.DisplayMember = "Name";
+            SubcategoryCbx.DataSource = await _subcategoriesRepository.SelectSubcategories();
+            SubcategoryCbx.DisplayMember = "Name";
+        }
         private async void CreateNote_Load(object sender, EventArgs e)
         {
+            RefreshCategories();
+            
             AddNoteBtn.Visible = true;
             EditNoteBtn.Visible = false;
         }
 
         private void AddCategoryBtn_Click(object sender, EventArgs e)
         {
-            CategoriesForm form = _serviceProvider.GetService<CategoriesForm>();
-            form.ShowDialog();
-        }
-
-        private void AddSubcategoryBtn_Click(object sender, EventArgs e)
-        {
-            SubcategoriesForm form = _serviceProvider.GetService<SubcategoriesForm>();
+            CategoriesForm form = _serviceProvider.GetRequiredService<CategoriesForm>();
             form.ShowDialog();
         }
 
@@ -51,16 +54,16 @@ namespace NotesApp
             Note newNote = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text);
 
             await _notesRepository.InsertNote(newNote);
-            await _notesRepository.SelectNotes();
             ClearAllFields();
         }
 
-        private void EditNoteBtn_Click(object sender, EventArgs e)
+        private async void EditNoteBtn_Click(object sender, EventArgs e)
         {
             if (!isValid())
                 return;
-
-            ClearAllFields();
+           
+            EditNoteBtn.Visible = false;
+            AddNoteBtn.Visible = true;
         }
 
         private bool isValid()

@@ -35,7 +35,6 @@ namespace NotesApp
             services.AddTransient<NotesForm>();
             services.AddTransient<CreateOrEditNoteForm>();
             services.AddTransient<CategoriesForm>();
-            services.AddTransient<SubcategoriesForm>();
                 
             return services;
         }

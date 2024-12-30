@@ -28,12 +28,119 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Category";
+            NewCategoryLbl = new Label();
+            NewSubcategoryLbl = new Label();
+            NewCategoryTxt = new TextBox();
+            NewSubcategoryTxt = new TextBox();
+            CategoriesLbx = new ListBox();
+            SubcategoriesLbx = new ListBox();
+            AddCategoryBtn = new Button();
+            AddSubcategoryBtn = new Button();
+            SuspendLayout();
+            // 
+            // NewCategoryLbl
+            // 
+            NewCategoryLbl.AutoSize = true;
+            NewCategoryLbl.Location = new Point(28, 32);
+            NewCategoryLbl.Margin = new Padding(4, 0, 4, 0);
+            NewCategoryLbl.Name = "NewCategoryLbl";
+            NewCategoryLbl.Size = new Size(134, 38);
+            NewCategoryLbl.TabIndex = 0;
+            NewCategoryLbl.Text = "Category:";
+            // 
+            // NewSubcategoryLbl
+            // 
+            NewSubcategoryLbl.AutoSize = true;
+            NewSubcategoryLbl.Location = new Point(489, 32);
+            NewSubcategoryLbl.Name = "NewSubcategoryLbl";
+            NewSubcategoryLbl.Size = new Size(177, 38);
+            NewSubcategoryLbl.TabIndex = 1;
+            NewSubcategoryLbl.Text = "Subcategory:";
+            // 
+            // NewCategoryTxt
+            // 
+            NewCategoryTxt.Location = new Point(28, 82);
+            NewCategoryTxt.Name = "NewCategoryTxt";
+            NewCategoryTxt.Size = new Size(409, 45);
+            NewCategoryTxt.TabIndex = 2;
+            // 
+            // NewSubcategoryTxt
+            // 
+            NewSubcategoryTxt.Location = new Point(489, 82);
+            NewSubcategoryTxt.Name = "NewSubcategoryTxt";
+            NewSubcategoryTxt.Size = new Size(404, 45);
+            NewSubcategoryTxt.TabIndex = 3;
+            // 
+            // CategoriesLbx
+            // 
+            CategoriesLbx.FormattingEnabled = true;
+            CategoriesLbx.ItemHeight = 38;
+            CategoriesLbx.Location = new Point(28, 144);
+            CategoriesLbx.Name = "CategoriesLbx";
+            CategoriesLbx.Size = new Size(409, 422);
+            CategoriesLbx.TabIndex = 4;
+            CategoriesLbx.SelectedIndexChanged += CategoriesLbx_SelectedIndexChanged;
+            // 
+            // SubcategoriesLbx
+            // 
+            SubcategoriesLbx.FormattingEnabled = true;
+            SubcategoriesLbx.ItemHeight = 38;
+            SubcategoriesLbx.Location = new Point(489, 144);
+            SubcategoriesLbx.Name = "SubcategoriesLbx";
+            SubcategoriesLbx.Size = new Size(404, 422);
+            SubcategoriesLbx.TabIndex = 5;
+            // 
+            // AddCategoryBtn
+            // 
+            AddCategoryBtn.Location = new Point(28, 586);
+            AddCategoryBtn.Name = "AddCategoryBtn";
+            AddCategoryBtn.Size = new Size(404, 61);
+            AddCategoryBtn.TabIndex = 6;
+            AddCategoryBtn.Text = "Add category";
+            AddCategoryBtn.UseVisualStyleBackColor = true;
+            AddCategoryBtn.Click += AddCategoryBtn_Click;
+            // 
+            // AddSubcategoryBtn
+            // 
+            AddSubcategoryBtn.Location = new Point(489, 586);
+            AddSubcategoryBtn.Name = "AddSubcategoryBtn";
+            AddSubcategoryBtn.Size = new Size(404, 61);
+            AddSubcategoryBtn.TabIndex = 7;
+            AddSubcategoryBtn.Text = "Add subcategory";
+            AddSubcategoryBtn.UseVisualStyleBackColor = true;
+            AddSubcategoryBtn.Click += AddSubcategoryBtn_Click;
+            // 
+            // CategoriesForm
+            // 
+            AutoScaleDimensions = new SizeF(15F, 38F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(919, 917);
+            Controls.Add(AddSubcategoryBtn);
+            Controls.Add(AddCategoryBtn);
+            Controls.Add(SubcategoriesLbx);
+            Controls.Add(CategoriesLbx);
+            Controls.Add(NewSubcategoryTxt);
+            Controls.Add(NewCategoryTxt);
+            Controls.Add(NewSubcategoryLbl);
+            Controls.Add(NewCategoryLbl);
+            Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Margin = new Padding(4, 5, 4, 5);
+            Name = "CategoriesForm";
+            Text = "Add categories";
+            Load += CategoriesForm_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Label NewCategoryLbl;
+        private Label NewSubcategoryLbl;
+        private TextBox NewCategoryTxt;
+        private TextBox NewSubcategoryTxt;
+        private ListBox CategoriesLbx;
+        private ListBox SubcategoriesLbx;
+        private Button AddCategoryBtn;
+        private Button AddSubcategoryBtn;
     }
 }

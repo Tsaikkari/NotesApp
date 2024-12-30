@@ -38,7 +38,6 @@
             CategoryCbx = new ComboBox();
             SubcategoryCbx = new ComboBox();
             AddCategoryBtn = new Button();
-            AddSubcategoryBtn = new Button();
             NoteTxt = new RichTextBox();
             SuspendLayout();
             // 
@@ -137,16 +136,6 @@
             AddCategoryBtn.UseVisualStyleBackColor = true;
             AddCategoryBtn.Click += AddCategoryBtn_Click;
             // 
-            // AddSubcategoryBtn
-            // 
-            AddSubcategoryBtn.Location = new Point(740, 156);
-            AddSubcategoryBtn.Name = "AddSubcategoryBtn";
-            AddSubcategoryBtn.Size = new Size(130, 46);
-            AddSubcategoryBtn.TabIndex = 11;
-            AddSubcategoryBtn.Text = "Add";
-            AddSubcategoryBtn.UseVisualStyleBackColor = true;
-            AddSubcategoryBtn.Click += AddSubcategoryBtn_Click;
-            // 
             // NoteTxt
             // 
             NoteTxt.Location = new Point(227, 228);
@@ -155,13 +144,12 @@
             NoteTxt.TabIndex = 12;
             NoteTxt.Text = "";
             // 
-            // CreateNote
+            // CreateOrEditNoteForm
             // 
             AutoScaleDimensions = new SizeF(15F, 38F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(897, 705);
             Controls.Add(NoteTxt);
-            Controls.Add(AddSubcategoryBtn);
             Controls.Add(AddCategoryBtn);
             Controls.Add(SubcategoryCbx);
             Controls.Add(CategoryCbx);
@@ -174,7 +162,7 @@
             Controls.Add(TitleLbl);
             Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(4);
-            Name = "CreateNote";
+            Name = "CreateOrEditNoteForm";
             Text = "Note";
             Load += CreateNote_Load;
             ResumeLayout(false);
@@ -193,7 +181,6 @@
         private ComboBox CategoryCbx;
         private ComboBox SubcategoryCbx;
         private Button AddCategoryBtn;
-        private Button AddSubcategoryBtn;
         private RichTextBox NoteTxt;
     }
 }
