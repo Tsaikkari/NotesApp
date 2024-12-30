@@ -11,20 +11,19 @@ namespace Domain.Models
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string NoteText { get; set; } = string.Empty;
-        public bool IsLearned { get; set; } = false;
+        public int LevelOfKnowledge { get; set; }
         public int CategoryId { get; set; } = 0;
         public int SubcategoryId { get; set; } = 0;
         
 
-        public Note(string title, int categoryId, int subcategoryId, string noteText, bool isLearned, int? id = null)
+        public Note(string title, int categoryId, int subcategoryId, string noteText, int? id = null)
         {
             Title = title;
             NoteText = noteText;
             CategoryId = categoryId;
             SubcategoryId = subcategoryId;
-            IsLearned = isLearned;
             if (id != null) 
-                id = (int)id;
+                Id = (int)id;
         }
 
         public Note() { }

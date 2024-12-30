@@ -45,7 +45,7 @@ namespace Data.Repositories
         {
             try
             {
-                string query = @"SELECT n.Id, n.Title, n.NoteText AS 'Text', n.IsLearned AS               'State', c.Name AS 'Category', sc.Name AS 'Subcategory', 
+                string query = @"SELECT n.Id, n.Title, n.NoteText AS 'Text', n.LevelOfKnowledge AS 'Knowledge', c.Name AS 'Category', sc.Name AS 'Subcategory', 
                                n.CategoryId, n.SubcategoryId
                                FROM Notes AS n 
                                JOIN Categories AS c ON n.CategoryId = c.Id
@@ -86,7 +86,7 @@ namespace Data.Repositories
                                SET
                                Title = @Title,
                                NoteText = @NoteText,
-                               IsLearned = @IsLearned,
+                               LevelOfKnowledge = @LevelOfKnowledge,
                                CategoryId = @CategoryId,
                                SubcategoryId = @SubcategoryId
                                WHERE Id = @Id";

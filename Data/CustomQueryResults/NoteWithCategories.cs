@@ -12,8 +12,8 @@ namespace Data.CustomQueryResults
         public string Title { get; set; } = string.Empty;
         public string NoteText { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
-        public string SubCategory {  get; set; } = string.Empty;
-        public bool IsLearned { get; set; } = false;
+        public string Subcategory {  get; set; } = string.Empty;
+        public int LevelOfKnowledge { get; set; } 
         public int CategoryId { get; set; } = 0;
         public int SubcategoryId { get; set; } = 0;
     }

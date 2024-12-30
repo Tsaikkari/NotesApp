@@ -41,7 +41,9 @@ namespace Data.Repositories
         {
             try
             {
-                string query = "SELECT * FROM Subcategories";
+                string query = @"SELECT sc.Id, sc.Name, sc.CategoryId
+                               FROM Subcategories AS sc
+                               JOIN Categories AS c ON sc.CategoryId = c.Id";
 
                 using (IDbConnection connection = new SqlConnection(ConnectionHelper.ConnectionString))
                 {

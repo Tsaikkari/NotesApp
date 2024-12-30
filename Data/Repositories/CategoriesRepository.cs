@@ -41,7 +41,7 @@ namespace Data.Repositories
         {
             try
             {
-                string query = "SELECT * FROM Categories";
+                string query = @"SELECT * FROM Categories";
 
                 using (IDbConnection connection = new SqlConnection(ConnectionHelper.ConnectionString))
                 {
