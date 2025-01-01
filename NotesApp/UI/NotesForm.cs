@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows;
 
 namespace NotesApp.UI
 {
@@ -25,6 +26,9 @@ namespace NotesApp.UI
         internal int noteToEditId;
 
         private List<NoteWithCategories> _notesCache;
+        private Category _catFilter;
+        private bool _isOpen = false;
+        private bool _hasNoSubcategories = false;
         public NotesForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
         {
             InitializeComponent();
@@ -46,36 +50,46 @@ namespace NotesApp.UI
 
         private async Task RefreshCategories()
         {
-            Category catFilter = (Category)CategoryFilterCbx.SelectedItem;
-            Subcategory subCatFilter = (Subcategory)SubcategoryFilterCbx.SelectedItem;
+            _catFilter = (Category)CategoryFilterCbx.SelectedItem;
 
             List<Category> cats = await _categoriesRepository.SelectCategories();
-            List<Subcategory> subCats = await _subcategoriesRepository.SelectSubcategories();
 
             List<Category> filterList = new List<Category>();
-            filterList.Add(new Category(0, "All categories"));
+            filterList.Add(new Category(0, "All notes"));
             filterList.AddRange(cats);
 
             CategoryFilterCbx.DataSource = filterList;
             CategoryFilterCbx.DisplayMember = "Name";
 
+            RefreshSubcategories();
+
+            if (_catFilter != null && _catFilter.Id != 0)
+            {
+                int indexToSelect = FindCatIndex(_catFilter.Id);
+                CategoryFilterCbx.SelectedIndex = indexToSelect + 1;
+            }
+        }
+
+        private async void RefreshSubcategories()
+        {
+            Subcategory subCatFilter = (Subcategory)SubcategoryFilterCbx.SelectedItem;
+
+            List<Subcategory> subCats = await _subcategoriesRepository.SelectSubcategories();
+
             List<Subcategory> filterSubList = new List<Subcategory>();
-            filterSubList.Add(new Subcategory(0, "All subcategories", 0));
+            filterSubList.Add(new Subcategory(0, "All notes", 0));
             filterSubList.AddRange(subCats);
 
             SubcategoryFilterCbx.DataSource = filterSubList;
             SubcategoryFilterCbx.DisplayMember = "Name";
 
-            if (catFilter != null && catFilter.Id != 0)
+            if (_catFilter != null && _catFilter.Id != 0)
             {
-                int indexToSelect = FindCatIndex(catFilter.Id);
-                CategoryFilterCbx.SelectedIndex = indexToSelect + 1;
-
                 if (subCatFilter != null && subCatFilter.Id != 0)
                 {
                     FindSubcatIndex(subCatFilter.Id);
                 }
-            }
+            }     
         }
 
         private int FindCatIndex(int categoryId)
@@ -138,23 +152,27 @@ namespace NotesApp.UI
             RefreshNotesCache();
         }
 
-        private void FilterGridData()
+        private async void FilterGridData()
         {
             Category selectedCat = (Category)CategoryFilterCbx.SelectedItem;
             Subcategory selectedSubcat = (Subcategory)SubcategoryFilterCbx.SelectedItem;
 
             if (selectedCat.Id == 0)
-            {
                 NotesGrid.DataSource = _notesCache;
-            }
+
             else if (selectedCat.Id != 0 && selectedSubcat.Id != 0)
             {
                 NotesGrid.DataSource = _notesCache.Where(n => n.CategoryId == selectedCat.Id && n.SubcategoryId == selectedSubcat.Id).ToList();
             }
-            else
+            else if (_isOpen)
             {
-                NotesGrid.DataSource = _notesCache.Where(n => n.CategoryId == selectedCat.Id).ToList();
+                List<Subcategory> subCats = await _subcategoriesRepository.SelectSubcategories();
+
+                var catSubcats = subCats.GroupBy(sc => sc.CategoryId).FirstOrDefault(g => g.Key == selectedCat.Id).ToList();
+                SubcategoryFilterCbx.DataSource = catSubcats;
             }
+            else
+                NotesGrid.DataSource = _notesCache.Where(n => n.CategoryId == selectedCat.Id).ToList(); 
         }
 
         private void NewNoteBtn_Click(object sender, EventArgs e)
@@ -166,7 +184,9 @@ namespace NotesApp.UI
 
         private async void CategoryFilterCbx_SelectedIndexChanged(object sender, EventArgs e)
         {
+            RefreshSubcategories();
             FilterGridData();
+            _isOpen = false;
         }
 
         private void SubcategoryFilterCbx_SelectedIndexChanged(object sender, EventArgs e)
@@ -193,6 +213,12 @@ namespace NotesApp.UI
                     noteToEditId = clickedNote.Id;
                 }
             }
+        }
+
+        private void SubcategoryFilterCbx_DropDown(object sender, EventArgs e)
+        {
+            _isOpen = true;
+            FilterGridData();
         }
     }
 }

@@ -98,6 +98,7 @@
             SubcategoryFilterCbx.Name = "SubcategoryFilterCbx";
             SubcategoryFilterCbx.Size = new Size(1023, 46);
             SubcategoryFilterCbx.TabIndex = 5;
+            SubcategoryFilterCbx.DropDown += SubcategoryFilterCbx_DropDown;
             SubcategoryFilterCbx.SelectedIndexChanged += SubcategoryFilterCbx_SelectedIndexChanged;
             // 
             // TitleLbl

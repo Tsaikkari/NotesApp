@@ -64,8 +64,7 @@ namespace NotesApp.UI
             Subcategory newSubcategory = new Subcategory();
             newSubcategory.Name = NewSubcategoryTxt.Text;
             newSubcategory.CategoryId = _category.Id;
-            MessageBox.Show(newSubcategory.CategoryId.ToString());
-
+          
             await _subcategoriesRepository.InsertSubcategory(newSubcategory);
             RefreshSubcategoryList();
             NewSubcategoryTxt.Text = "";
