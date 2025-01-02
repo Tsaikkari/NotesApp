@@ -198,6 +198,7 @@ namespace NotesApp.UI
             CustomizeGridAppearance();
             await RefreshCategories();
             RefreshNotesCache();
+            NotesGrid.Rows[0].Selected = false;
         }
 
         private async void FilterGridData()
@@ -253,16 +254,11 @@ namespace NotesApp.UI
 
         private async void EditKnowledgeLevelBtn_Click(object sender, EventArgs e)
         {
-            bool isValid = true;
-            string message = "";
-
             if (KnowledgeLevelNum.Value == 0)
-            {
-                isValid = false;
-                message += "Please enter knowledge level.\n\n";
-            }
-            if (!isValid)
-                MessageBox.Show(message, "Form not valid!");
+                MessageBox.Show("Please enter knowledge level.\n\n");
+            if (NotesGrid.SelectedRows.Count == 0)
+                MessageBox.Show("Please select the note.\n\n");
+
             if (noteToEditId != 0)
             {
                 NoteWithCategories note = _notesCache.FirstOrDefault(n => n.Id == noteToEditId);
