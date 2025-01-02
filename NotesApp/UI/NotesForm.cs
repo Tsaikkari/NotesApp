@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows;
 using Domain.Models;
+using System.Drawing.Design;
 
 namespace NotesApp.UI
 {
@@ -24,12 +25,15 @@ namespace NotesApp.UI
         private readonly IServiceProvider _serviceProvider;
         private readonly ISubcategoriesRepository _subcategoriesRepository;
 
-        public event Action<NoteWithCategories> OnSelectedNoteClick;
-
         private List<NoteWithCategories> _notesCache;
         private Category _catFilter;
         private bool _isOpen = false;
-        internal int noteToEditId;
+
+        internal static int noteToEditId;
+        internal static decimal levelOfKnowledge;
+        internal static string? categoryName;
+        internal static string? subcategoryName;
+
         public NotesForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
         {
             InitializeComponent();
@@ -48,9 +52,6 @@ namespace NotesApp.UI
         {
             _notesCache = await _notesRepository.SelectNotes();
             FilterGridData();
-
-            KnowledgeLevelNum.Visible = false;
-            EditKnowledgeLevelBtn.Visible = false;
         }
 
         private async Task RefreshCategories()
@@ -95,6 +96,13 @@ namespace NotesApp.UI
                     FindSubcatIndex(subCatFilter.Id);
                 }
             }
+        }
+
+        private void ClearNote()
+        {
+            TitleLbl.Text = "";
+            NoteTxt.Text = "";
+            KnowledgeLevelNum.Value = 0;
         }
 
         private int FindCatIndex(int categoryId)
@@ -166,13 +174,18 @@ namespace NotesApp.UI
                 {
                     await _notesRepository.DeleteNote(clickedNote.Id);
                     RefreshNotesCache();
+                    ClearNote();
                 }
                 else if (NotesGrid.CurrentCell.OwningColumn.Name == "EditBtn")
                 {
+                    noteToEditId = clickedNote.Id;
+                    levelOfKnowledge = clickedNote.LevelOfKnowledge;
+                    categoryName = CategoryFilterCbx.Text;
+                    subcategoryName = SubcategoryFilterCbx.Text;
+                   
                     CreateOrEditNoteForm form = _serviceProvider.GetRequiredService<CreateOrEditNoteForm>();
                     form.FormClosed += (sender, e) => RefreshNotesCache();
                     form.ShowDialog();
-                    noteToEditId = clickedNote.Id;
                 }
                 else if (NotesGrid.CurrentCell.OwningColumn.Name == "TitleBtn")
                 {
@@ -180,9 +193,6 @@ namespace NotesApp.UI
                     NoteTxt.Text = clickedNote.NoteText;
                     KnowledgeLevelNum.Value = clickedNote.LevelOfKnowledge;
                     noteToEditId = clickedNote.Id;
-
-                    KnowledgeLevelNum.Visible = true;
-                    EditKnowledgeLevelBtn.Visible = true;
                 }
             }
         }
@@ -219,6 +229,7 @@ namespace NotesApp.UI
 
         private void NewNoteBtn_Click(object sender, EventArgs e)
         {
+            noteToEditId = 0;
             CreateOrEditNoteForm form = _serviceProvider.GetService<CreateOrEditNoteForm>();
             form.FormClosed += (sender, e) => RefreshNotesCache();
             form.ShowDialog();
@@ -228,24 +239,20 @@ namespace NotesApp.UI
         {
             RefreshSubcategories();
             FilterGridData();
+            ClearNote();
             _isOpen = false;
         }
 
         private void SubcategoryFilterCbx_SelectedIndexChanged(object sender, EventArgs e)
         {
             FilterGridData();
-
-            KnowledgeLevelNum.Visible = false;
-            EditKnowledgeLevelBtn.Visible = false;
+            ClearNote();
         }
 
         private void SubcategoryFilterCbx_DropDown(object sender, EventArgs e)
         {
             _isOpen = true;
             FilterGridData();
-
-            KnowledgeLevelNum.Visible = false;
-            EditKnowledgeLevelBtn.Visible = false;
         }
 
         private async void EditKnowledgeLevelBtn_Click(object sender, EventArgs e)

@@ -15,6 +15,14 @@ namespace NotesApp
         private readonly ISubcategoriesRepository _subcategoriesRepository;
         private readonly IServiceProvider _serviceProvider;
 
+        private List<NoteWithCategories> _notesCache;
+        private List<Category> _categoriesCache;
+        private List<Subcategory> _subcategoriesCache;
+
+        private int noteToEditId = NotesForm.noteToEditId;
+        private string categoryName = NotesForm.categoryName;
+        private string subcategoryName = NotesForm.subcategoryName;
+
         public CreateOrEditNoteForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
         {
             InitializeComponent();
@@ -23,19 +31,95 @@ namespace NotesApp
             _categoriesRepository = categoriesRepository;
             _subcategoriesRepository = subcategoriesRepository;
         }
+
         private async void RefreshCategories()
         {
-            CategoryCbx.DataSource = await _categoriesRepository.SelectCategories();
+            _categoriesCache = await _categoriesRepository.SelectCategories();
+            _subcategoriesCache = await _subcategoriesRepository.SelectSubcategories();
+
+            CategoryCbx.DataSource = _categoriesCache;
             CategoryCbx.DisplayMember = "Name";
-            SubcategoryCbx.DataSource = await _subcategoriesRepository.SelectSubcategories();
+            SubcategoryCbx.DataSource = _subcategoriesCache;
             SubcategoryCbx.DisplayMember = "Name";
+
+            if (categoryName != "All notes" && subcategoryName != "All notes" && noteToEditId != 0)
+                SetCategories();
+            else
+            {
+                List<Category> filterList = new List<Category>();
+                filterList.Add(new Category(0, "All notes"));
+                filterList.AddRange(_categoriesCache);
+
+                CategoryCbx.DataSource = filterList;
+                CategoryCbx.DisplayMember = "Name";
+
+                List<Subcategory> filterSubList = new List<Subcategory>();
+                filterSubList.Add(new Subcategory(0, "All notes", 0));
+                filterSubList.AddRange(_subcategoriesCache);
+
+                SubcategoryCbx.DataSource = filterSubList;
+                SubcategoryCbx.DisplayMember = "Name";
+            }
         }
+
+        private void SetCategories()
+        {
+            if (_categoriesCache != null && _subcategoriesCache != null)
+            {
+                List<Category> filterCatList = new List<Category>();
+                Category cat = _categoriesCache.FirstOrDefault(c => c.Name == categoryName);
+
+                foreach (Category c in filterCatList)
+                {
+                    if (c.Name != categoryName)
+                        filterCatList.Add(c);
+                }
+
+                filterCatList.Insert(0, cat);
+                CategoryCbx.DataSource = filterCatList;
+                CategoryCbx.DisplayMember = "Name";
+
+                List<Subcategory> filterSubcatList = new List<Subcategory>();
+                Subcategory subcat = _subcategoriesCache.FirstOrDefault(c => c.Name == subcategoryName);
+
+                foreach (Subcategory c in filterSubcatList)
+                {
+                    if (c.Name != subcategoryName)
+                        filterSubcatList.Add(c);
+                }
+
+                filterSubcatList.Insert(0, subcat);
+                SubcategoryCbx.DataSource = filterSubcatList;
+                SubcategoryCbx.DisplayMember = "Name";
+            }
+        }
+
+        private void FillFormForEdit()
+        {
+            if (noteToEditId != 0)
+            {
+                AddNoteBtn.Visible = false;
+                FillForm(noteToEditId);
+            }
+            else
+                AddNoteBtn.Visible = true;
+        }
+
+        private async void FillForm(int? noteToEditId)
+        {
+            _notesCache = await _notesRepository.SelectNotes();
+
+            NoteWithCategories clickedNote = _notesCache.FirstOrDefault(n => n.Id == noteToEditId);
+
+            TitleTxtBox.Text = clickedNote.Title;
+            NoteTxt.Text = clickedNote.NoteText;
+        }
+
+
         private void CreateNote_Load(object sender, EventArgs e)
         {
+            FillFormForEdit();
             RefreshCategories();
-            
-            AddNoteBtn.Visible = true;
-            EditNoteBtn.Visible = false;
         }
 
         private void AddCategoryBtn_Click(object sender, EventArgs e)
@@ -51,19 +135,30 @@ namespace NotesApp
 
             int CategoryId = ((Category)CategoryCbx.SelectedItem).Id;
             int SubcategoryId = ((Subcategory)SubcategoryCbx.SelectedItem).Id;
-            Note newNote = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text);
+            Note noteToEdit = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text);
 
-            await _notesRepository.InsertNote(newNote);
+            await _notesRepository.InsertNote(noteToEdit);
             ClearAllFields();
+            AddNoteBtn.Visible = false;
+            Close();
         }
 
         private async void EditNoteBtn_Click(object sender, EventArgs e)
         {
             if (!isValid())
                 return;
-           
-            EditNoteBtn.Visible = false;
+
+            int CategoryId = ((Category)CategoryCbx.SelectedItem).Id;
+            int SubcategoryId = ((Subcategory)SubcategoryCbx.SelectedItem).Id;
+            decimal levelOfKnowledge = NotesForm.levelOfKnowledge;
+            Note newNote = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text, levelOfKnowledge, noteToEditId);
+
+            await _notesRepository.UpdateNote(newNote);
+            ClearAllFields();
             AddNoteBtn.Visible = true;
+            EditNoteBtn.Visible = false;
+            noteToEditId = 0;
+            Close();
         }
 
         private bool isValid()
@@ -76,11 +171,23 @@ namespace NotesApp
                 isValid = false;
                 message += "Please enter title.\n\n";
             }
-           
+
             if (string.IsNullOrEmpty(NoteTxt.Text))
             {
                 isValid = false;
                 message += "Please enter text.\n\n";
+            }
+
+            if (CategoryCbx.Text == "All notes")
+            {
+                isValid = false;
+                message += "Please select category.\n\n";
+            }
+
+            if (SubcategoryCbx.Text == "All notes")
+            {
+                isValid = false;
+                message += "Please select subcategory.\n\n";
             }
 
             if (!isValid)
@@ -92,6 +199,9 @@ namespace NotesApp
         {
             TitleTxtBox.Text = string.Empty;
             NoteTxt.Text = string.Empty;
+            noteToEditId = 0;
+            categoryName = string.Empty;
+            subcategoryName = string.Empty;
         }
     }
 }

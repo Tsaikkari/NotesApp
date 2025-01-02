@@ -83,7 +83,7 @@
             // 
             // EditNoteBtn
             // 
-            EditNoteBtn.Location = new Point(227, 614);
+            EditNoteBtn.Location = new Point(227, 626);
             EditNoteBtn.Margin = new Padding(4);
             EditNoteBtn.Name = "EditNoteBtn";
             EditNoteBtn.Size = new Size(643, 66);
@@ -94,7 +94,7 @@
             // 
             // AddNoteBtn
             // 
-            AddNoteBtn.Location = new Point(227, 609);
+            AddNoteBtn.Location = new Point(227, 621);
             AddNoteBtn.Margin = new Padding(4);
             AddNoteBtn.Name = "AddNoteBtn";
             AddNoteBtn.Size = new Size(643, 71);
