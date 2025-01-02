@@ -19,9 +19,10 @@ namespace NotesApp
         private List<Category> _categoriesCache;
         private List<Subcategory> _subcategoriesCache;
 
-        private int noteToEditId = NotesForm.noteToEditId;
-        private string categoryName = NotesForm.categoryName;
-        private string subcategoryName = NotesForm.subcategoryName;
+        public int NoteId { get; set; }
+        public decimal LevelOfKnowledge { get; set; }
+        public string CategoryName { get; set; }
+        public string SubcategoryName { get; set; }
 
         public CreateOrEditNoteForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
         {
@@ -42,7 +43,7 @@ namespace NotesApp
             SubcategoryCbx.DataSource = _subcategoriesCache;
             SubcategoryCbx.DisplayMember = "Name";
 
-            if (categoryName != "All notes" && subcategoryName != "All notes" && noteToEditId != 0)
+            if (CategoryName != "All notes" && SubcategoryName != "All notes" && NoteId != 0)
                 SetCategories();
             else
             {
@@ -67,11 +68,11 @@ namespace NotesApp
             if (_categoriesCache != null && _subcategoriesCache != null)
             {
                 List<Category> filterCatList = new List<Category>();
-                Category cat = _categoriesCache.FirstOrDefault(c => c.Name == categoryName);
+                Category cat = _categoriesCache.FirstOrDefault(c => c.Name == CategoryName);
 
                 foreach (Category c in filterCatList)
                 {
-                    if (c.Name != categoryName)
+                    if (c.Name != CategoryName)
                         filterCatList.Add(c);
                 }
 
@@ -80,11 +81,11 @@ namespace NotesApp
                 CategoryCbx.DisplayMember = "Name";
 
                 List<Subcategory> filterSubcatList = new List<Subcategory>();
-                Subcategory subcat = _subcategoriesCache.FirstOrDefault(c => c.Name == subcategoryName);
+                Subcategory subcat = _subcategoriesCache.FirstOrDefault(c => c.Name == SubcategoryName);
 
                 foreach (Subcategory c in filterSubcatList)
                 {
-                    if (c.Name != subcategoryName)
+                    if (c.Name != SubcategoryName)
                         filterSubcatList.Add(c);
                 }
 
@@ -96,20 +97,20 @@ namespace NotesApp
 
         private void FillFormForEdit()
         {
-            if (noteToEditId != 0)
+            if (NoteId != 0)
             {
                 AddNoteBtn.Visible = false;
-                FillForm(noteToEditId);
+                FillForm(NoteId);
             }
             else
                 AddNoteBtn.Visible = true;
         }
 
-        private async void FillForm(int? noteToEditId)
+        private async void FillForm(int? NoteId)
         {
             _notesCache = await _notesRepository.SelectNotes();
 
-            NoteWithCategories clickedNote = _notesCache.FirstOrDefault(n => n.Id == noteToEditId);
+            NoteWithCategories clickedNote = _notesCache.FirstOrDefault(n => n.Id == NoteId);
 
             TitleTxtBox.Text = clickedNote.Title;
             NoteTxt.Text = clickedNote.NoteText;
@@ -135,9 +136,9 @@ namespace NotesApp
 
             int CategoryId = ((Category)CategoryCbx.SelectedItem).Id;
             int SubcategoryId = ((Subcategory)SubcategoryCbx.SelectedItem).Id;
-            Note noteToEdit = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text);
+            Note newNote = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text);
 
-            await _notesRepository.InsertNote(noteToEdit);
+            await _notesRepository.InsertNote(newNote);
             ClearAllFields();
             AddNoteBtn.Visible = false;
             Close();
@@ -150,14 +151,14 @@ namespace NotesApp
 
             int CategoryId = ((Category)CategoryCbx.SelectedItem).Id;
             int SubcategoryId = ((Subcategory)SubcategoryCbx.SelectedItem).Id;
-            decimal levelOfKnowledge = NotesForm.levelOfKnowledge;
-            Note newNote = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text, levelOfKnowledge, noteToEditId);
+       
+            Note note = new Note(TitleTxtBox.Text, CategoryId, SubcategoryId, NoteTxt.Text, LevelOfKnowledge, NoteId);
 
-            await _notesRepository.UpdateNote(newNote);
+            await _notesRepository.UpdateNote(note);
             ClearAllFields();
             AddNoteBtn.Visible = true;
             EditNoteBtn.Visible = false;
-            noteToEditId = 0;
+            NoteId = 0;
             Close();
         }
 
@@ -199,9 +200,9 @@ namespace NotesApp
         {
             TitleTxtBox.Text = string.Empty;
             NoteTxt.Text = string.Empty;
-            noteToEditId = 0;
-            categoryName = string.Empty;
-            subcategoryName = string.Empty;
+            NoteId = 0;
+            CategoryName = string.Empty;
+            SubcategoryName = string.Empty;
         }
     }
 }

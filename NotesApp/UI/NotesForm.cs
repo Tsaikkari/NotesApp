@@ -29,10 +29,7 @@ namespace NotesApp.UI
         private Category _catFilter;
         private bool _isOpen = false;
 
-        internal static int noteToEditId;
-        internal static decimal levelOfKnowledge;
-        internal static string? categoryName;
-        internal static string? subcategoryName;
+        private int noteToEditId;
 
         public NotesForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
         {
@@ -178,12 +175,11 @@ namespace NotesApp.UI
                 }
                 else if (NotesGrid.CurrentCell.OwningColumn.Name == "EditBtn")
                 {
-                    noteToEditId = clickedNote.Id;
-                    levelOfKnowledge = clickedNote.LevelOfKnowledge;
-                    categoryName = CategoryFilterCbx.Text;
-                    subcategoryName = SubcategoryFilterCbx.Text;
-                   
                     CreateOrEditNoteForm form = _serviceProvider.GetRequiredService<CreateOrEditNoteForm>();
+                    form.NoteId = clickedNote.Id;
+                    form.LevelOfKnowledge = clickedNote.LevelOfKnowledge;
+                    form.CategoryName = CategoryFilterCbx.Text;
+                    form.SubcategoryName = SubcategoryFilterCbx.Text;
                     form.FormClosed += (sender, e) => RefreshNotesCache();
                     form.ShowDialog();
                 }
@@ -257,6 +253,16 @@ namespace NotesApp.UI
 
         private async void EditKnowledgeLevelBtn_Click(object sender, EventArgs e)
         {
+            bool isValid = true;
+            string message = "";
+
+            if (KnowledgeLevelNum.Value == 0)
+            {
+                isValid = false;
+                message += "Please enter knowledge level.\n\n";
+            }
+            if (!isValid)
+                MessageBox.Show(message, "Form not valid!");
             if (noteToEditId != 0)
             {
                 NoteWithCategories note = _notesCache.FirstOrDefault(n => n.Id == noteToEditId);
