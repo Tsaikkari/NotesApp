@@ -45,7 +45,7 @@ namespace Data.Repositories
         {
             try
             {
-                string query = @"SELECT n.Id, n.Title, n.NoteText AS 'Text', n.LevelOfKnowledge AS 'Knowledge', c.Name AS 'Category', sc.Name AS 'Subcategory', 
+                string query = @"SELECT n.Id, n.Title, n.NoteText, n.LevelOfKnowledge, c.Name AS 'Category', sc.Name AS 'Subcategory', 
                                n.CategoryId, n.SubcategoryId
                                FROM Notes AS n 
                                JOIN Categories AS c ON n.CategoryId = c.Id
@@ -57,11 +57,29 @@ namespace Data.Repositories
                 }
             }
             catch (Exception ex)
-            {;
+            {
                 ErrorOccured("An error happened while getting notes.");
                 return new List<NoteWithCategories>();
             }
         }
+
+        public async Task SelectNote(int Id)
+        {
+            try
+            {
+                string query = @$"SELECT Title, NoteText, LevelOfKnowledge FROM Notes WHERE Id={Id}";
+
+                using (IDbConnection connection = new SqlConnection(ConnectionHelper.ConnectionString))
+                {
+                    await connection.ExecuteAsync(query);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorOccured("An error happened while deleting note.");
+            }
+        }
+
         public async Task DeleteNote(int Id)
         {
             try

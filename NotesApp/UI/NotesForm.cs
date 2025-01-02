@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows;
+using Domain.Models;
 
 namespace NotesApp.UI
 {
@@ -23,12 +24,12 @@ namespace NotesApp.UI
         private readonly IServiceProvider _serviceProvider;
         private readonly ISubcategoriesRepository _subcategoriesRepository;
 
-        internal int noteToEditId;
+        public event Action<NoteWithCategories> OnSelectedNoteClick;
 
         private List<NoteWithCategories> _notesCache;
         private Category _catFilter;
         private bool _isOpen = false;
-        private bool _hasNoSubcategories = false;
+        internal int noteToEditId;
         public NotesForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
         {
             InitializeComponent();
@@ -42,10 +43,14 @@ namespace NotesApp.UI
         {
             MessageBox.Show(errorMessage);
         }
+
         private async void RefreshNotesCache()
         {
             _notesCache = await _notesRepository.SelectNotes();
             FilterGridData();
+
+            KnowledgeLevelNum.Visible = false;
+            EditKnowledgeLevelBtn.Visible = false;
         }
 
         private async Task RefreshCategories()
@@ -89,7 +94,7 @@ namespace NotesApp.UI
                 {
                     FindSubcatIndex(subCatFilter.Id);
                 }
-            }     
+            }
         }
 
         private int FindCatIndex(int categoryId)
@@ -117,21 +122,27 @@ namespace NotesApp.UI
             NotesGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             NotesGrid.AutoGenerateColumns = false;
 
-            DataGridViewColumn[] columns = new DataGridViewColumn[7];
+            DataGridViewColumn[] columns = new DataGridViewColumn[8];
             columns[0] = new DataGridViewTextBoxColumn() { DataPropertyName = "Id", Visible = false };
-            columns[1] = new DataGridViewTextBoxColumn() { DataPropertyName = "Title", HeaderText = "Title" };
+            columns[1] = new DataGridViewButtonColumn()
+            {
+                Text = "Title",
+                Name = "TitleBtn",
+                HeaderText = "Title",
+                DataPropertyName = "Title"
+            };
             columns[2] = new DataGridViewTextBoxColumn() { DataPropertyName = "NoteText", Visible = false };
             columns[3] = new DataGridViewTextBoxColumn() { DataPropertyName = "Category", HeaderText = "Category" };
             columns[4] = new DataGridViewTextBoxColumn() { DataPropertyName = "Subcategory", HeaderText = "Subcat" };
             columns[5] = new DataGridViewTextBoxColumn() { DataPropertyName = "LevelOfKnowledge", Visible = false };
-            columns[5] = new DataGridViewButtonColumn()
+            columns[6] = new DataGridViewButtonColumn()
             {
                 Text = "Edit",
                 Name = "EditBtn",
                 HeaderText = "",
                 UseColumnTextForButtonValue = true
             };
-            columns[6] = new DataGridViewButtonColumn()
+            columns[7] = new DataGridViewButtonColumn()
             {
                 Text = "Delete",
                 Name = "DeleteBtn",
@@ -143,6 +154,37 @@ namespace NotesApp.UI
             NotesGrid.RowHeadersVisible = false;
             NotesGrid.Columns.Clear();
             NotesGrid.Columns.AddRange(columns);
+        }
+
+        private async void NotesGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && NotesGrid.CurrentCell is DataGridViewButtonCell)
+            {
+                NoteWithCategories clickedNote = (NoteWithCategories)NotesGrid.Rows[e.RowIndex].DataBoundItem;
+
+                if (NotesGrid.CurrentCell.OwningColumn.Name == "DeleteBtn")
+                {
+                    await _notesRepository.DeleteNote(clickedNote.Id);
+                    RefreshNotesCache();
+                }
+                else if (NotesGrid.CurrentCell.OwningColumn.Name == "EditBtn")
+                {
+                    CreateOrEditNoteForm form = _serviceProvider.GetRequiredService<CreateOrEditNoteForm>();
+                    form.FormClosed += (sender, e) => RefreshNotesCache();
+                    form.ShowDialog();
+                    noteToEditId = clickedNote.Id;
+                }
+                else if (NotesGrid.CurrentCell.OwningColumn.Name == "TitleBtn")
+                {
+                    TitleLbl.Text = clickedNote.Title;
+                    NoteTxt.Text = clickedNote.NoteText;
+                    KnowledgeLevelNum.Value = clickedNote.LevelOfKnowledge;
+                    noteToEditId = clickedNote.Id;
+
+                    KnowledgeLevelNum.Visible = true;
+                    EditKnowledgeLevelBtn.Visible = true;
+                }
+            }
         }
 
         private async void NotesForm_Load(object sender, EventArgs e)
@@ -172,7 +214,7 @@ namespace NotesApp.UI
                 SubcategoryFilterCbx.DataSource = catSubcats;
             }
             else
-                NotesGrid.DataSource = _notesCache.Where(n => n.CategoryId == selectedCat.Id).ToList(); 
+                NotesGrid.DataSource = _notesCache.Where(n => n.CategoryId == selectedCat.Id).ToList();
         }
 
         private void NewNoteBtn_Click(object sender, EventArgs e)
@@ -182,7 +224,7 @@ namespace NotesApp.UI
             form.ShowDialog();
         }
 
-        private async void CategoryFilterCbx_SelectedIndexChanged(object sender, EventArgs e)
+        private void CategoryFilterCbx_SelectedIndexChanged(object sender, EventArgs e)
         {
             RefreshSubcategories();
             FilterGridData();
@@ -192,33 +234,33 @@ namespace NotesApp.UI
         private void SubcategoryFilterCbx_SelectedIndexChanged(object sender, EventArgs e)
         {
             FilterGridData();
-        }
 
-        private async void NotesGrid_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0 && NotesGrid.CurrentCell is DataGridViewButtonCell)
-            {
-                NoteWithCategories clickedNote = (NoteWithCategories)NotesGrid.Rows[e.RowIndex].DataBoundItem;
-
-                if (NotesGrid.CurrentCell.OwningColumn.Name == "DeleteBtn")
-                {
-                    await _notesRepository.DeleteNote(clickedNote.Id);
-                    RefreshNotesCache();
-                }
-                else if (NotesGrid.CurrentCell.OwningColumn.Name == "EditBtn")
-                {
-                    CreateOrEditNoteForm form = _serviceProvider.GetRequiredService<CreateOrEditNoteForm>();
-                    form.FormClosed += (sender, e) => RefreshNotesCache();
-                    form.ShowDialog();
-                    noteToEditId = clickedNote.Id;
-                }
-            }
+            KnowledgeLevelNum.Visible = false;
+            EditKnowledgeLevelBtn.Visible = false;
         }
 
         private void SubcategoryFilterCbx_DropDown(object sender, EventArgs e)
         {
             _isOpen = true;
             FilterGridData();
+
+            KnowledgeLevelNum.Visible = false;
+            EditKnowledgeLevelBtn.Visible = false;
+        }
+
+        private async void EditKnowledgeLevelBtn_Click(object sender, EventArgs e)
+        {
+            if (noteToEditId != 0)
+            {
+                NoteWithCategories note = _notesCache.FirstOrDefault(n => n.Id == noteToEditId);
+
+                Note noteToEdit = new Note(TitleLbl.Text, note.CategoryId, note.SubcategoryId, NoteTxt.Text, KnowledgeLevelNum.Value, noteToEditId);
+
+                await _notesRepository.UpdateNote(noteToEdit);
+                RefreshNotesCache();
+
+                noteToEditId = 0;
+            }
         }
     }
 }

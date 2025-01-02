@@ -13,6 +13,7 @@ namespace Data.Interfaces
         public event Action<string> OnError;
         public Task InsertNote(Note note);
         public Task<List<NoteWithCategories>> SelectNotes();
+        public Task SelectNote(int Id);
         public Task DeleteNote(int Id);
         public Task UpdateNote(Note note);
     }

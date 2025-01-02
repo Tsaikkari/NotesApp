@@ -13,7 +13,7 @@ namespace Data.CustomQueryResults
         public string NoteText { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string Subcategory {  get; set; } = string.Empty;
-        public int LevelOfKnowledge { get; set; } 
+        public decimal LevelOfKnowledge { get; set; } = 0;
         public int CategoryId { get; set; } = 0;
         public int SubcategoryId { get; set; } = 0;
     }

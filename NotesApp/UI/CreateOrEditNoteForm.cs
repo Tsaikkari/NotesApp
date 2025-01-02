@@ -30,7 +30,7 @@ namespace NotesApp
             SubcategoryCbx.DataSource = await _subcategoriesRepository.SelectSubcategories();
             SubcategoryCbx.DisplayMember = "Name";
         }
-        private async void CreateNote_Load(object sender, EventArgs e)
+        private void CreateNote_Load(object sender, EventArgs e)
         {
             RefreshCategories();
             
