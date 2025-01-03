@@ -31,6 +31,13 @@ namespace NotesApp
             _serviceProvider = serviceProvider;
             _categoriesRepository = categoriesRepository;
             _subcategoriesRepository = subcategoriesRepository;
+
+            _notesRepository.OnSuccess += ShowSuccessMessage;
+        }
+
+        private void ShowSuccessMessage(string successMessage)
+        {
+            MessageBox.Show(successMessage);
         }
 
         private async void RefreshCategories()
@@ -156,9 +163,6 @@ namespace NotesApp
 
             await _notesRepository.UpdateNote(note);
             ClearAllFields();
-            AddNoteBtn.Visible = true;
-            EditNoteBtn.Visible = false;
-            NoteId = 0;
             Close();
         }
 

@@ -17,6 +17,12 @@ namespace Data.Repositories
     public class NotesRepository: INotesRepository
     {
         public event Action<string> OnError;
+        public event Action<string> OnSuccess;
+
+        private void SuccessfullyCompleted(string successMessage)
+        {
+            OnSuccess?.Invoke(successMessage);
+        }
         private void ErrorOccured(string errorMessage)
         {
             if (OnError != null)
@@ -63,23 +69,6 @@ namespace Data.Repositories
             }
         }
 
-        public async Task SelectNote(int Id)
-        {
-            try
-            {
-                string query = @$"SELECT Title, NoteText, LevelOfKnowledge FROM Notes WHERE Id={Id}";
-
-                using (IDbConnection connection = new SqlConnection(ConnectionHelper.ConnectionString))
-                {
-                    await connection.ExecuteAsync(query);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorOccured("An error happened while deleting note.");
-            }
-        }
-
         public async Task DeleteNote(int Id)
         {
             try
@@ -112,6 +101,7 @@ namespace Data.Repositories
                 using (IDbConnection connection = new SqlConnection(ConnectionHelper.ConnectionString))
                 {
                     await connection.ExecuteAsync(query, note);
+                    SuccessfullyCompleted("Successfully completed!");
                 }
             }
             catch (Exception ex)

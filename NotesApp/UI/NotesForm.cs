@@ -39,6 +39,13 @@ namespace NotesApp.UI
             _serviceProvider = serviceProvider;
             _categoriesRepository = categoriesRepository;
             _subcategoriesRepository = subcategoriesRepository;
+
+            _notesRepository.OnSuccess += ShowSuccessMessage;
+        }
+
+        private void ShowSuccessMessage(string successMessage)
+        {
+            MessageBox.Show(successMessage);
         }
         private void OnErrorOccured(string errorMessage)
         {
@@ -256,8 +263,8 @@ namespace NotesApp.UI
         {
             if (KnowledgeLevelNum.Value == 0)
                 MessageBox.Show("Please enter knowledge level.\n\n");
-            if (NotesGrid.SelectedRows.Count == 0)
-                MessageBox.Show("Please select the note.\n\n");
+            if (NoteTxt.Text == "")
+                MessageBox.Show("Please select a note.\n\n");
 
             if (noteToEditId != 0)
             {
