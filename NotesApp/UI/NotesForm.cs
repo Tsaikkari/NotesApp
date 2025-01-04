@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.Windows;
 using Domain.Models;
 using System.Drawing.Design;
+using NotesApp.Categories;
 
 namespace NotesApp.UI
 {
@@ -22,24 +23,24 @@ namespace NotesApp.UI
     {
         private readonly INotesRepository _notesRepository;
         private readonly ICategoriesRepository _categoriesRepository;
-        private readonly IServiceProvider _serviceProvider;
         private readonly ISubcategoriesRepository _subcategoriesRepository;
+        private readonly IServiceProvider _serviceProvider;
+        
 
         private List<NoteWithCategories> _notesCache;
+        CategoriesCache _categoriesCache;
         private Category _catFilter;
         private bool _isOpen = false;
 
         private int noteToEditId;
 
-        public NotesForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
+        public NotesForm(INotesRepository notesRepository, IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _notesRepository = notesRepository;
             _notesRepository.OnError += OnErrorOccured;
             _serviceProvider = serviceProvider;
-            _categoriesRepository = categoriesRepository;
-            _subcategoriesRepository = subcategoriesRepository;
-
+            _categoriesCache = _serviceProvider.GetRequiredService<CategoriesCache>();
             _notesRepository.OnSuccess += ShowSuccessMessage;
         }
 
@@ -62,15 +63,9 @@ namespace NotesApp.UI
         {
             _catFilter = (Category)CategoryFilterCbx.SelectedItem;
 
-            List<Category> cats = await _categoriesRepository.SelectCategories();
-
-            List<Category> filterList = new List<Category>();
-            filterList.Add(new Category(0, "All notes"));
-            filterList.AddRange(cats);
-
-            CategoryFilterCbx.DataSource = filterList;
+            CategoryFilterCbx.DataSource = _categoriesCache.DefaultCategoryList;
             CategoryFilterCbx.DisplayMember = "Name";
-
+           
             RefreshSubcategories();
 
             if (_catFilter != null && _catFilter.Id != 0)
@@ -84,13 +79,7 @@ namespace NotesApp.UI
         {
             Subcategory subCatFilter = (Subcategory)SubcategoryFilterCbx.SelectedItem;
 
-            List<Subcategory> subCats = await _subcategoriesRepository.SelectSubcategories();
-
-            List<Subcategory> filterSubList = new List<Subcategory>();
-            filterSubList.Add(new Subcategory(0, "All notes", 0));
-            filterSubList.AddRange(subCats);
-
-            SubcategoryFilterCbx.DataSource = filterSubList;
+            SubcategoryFilterCbx.DataSource = _categoriesCache.DefaultSubcategoryList;
             SubcategoryFilterCbx.DisplayMember = "Name";
 
             if (_catFilter != null && _catFilter.Id != 0)
@@ -203,9 +192,9 @@ namespace NotesApp.UI
         private async void NotesForm_Load(object sender, EventArgs e)
         {
             CustomizeGridAppearance();
-            await RefreshCategories();
+            await _categoriesCache.RefreshData();
+            RefreshCategories();
             RefreshNotesCache();
-            NotesGrid.Rows[0].Selected = false;
         }
 
         private async void FilterGridData()
@@ -222,7 +211,7 @@ namespace NotesApp.UI
             }
             else if (_isOpen)
             {
-                List<Subcategory> subCats = await _subcategoriesRepository.SelectSubcategories();
+                List<Subcategory> subCats = _categoriesCache.DefaultSubcategoryList;
 
                 var catSubcats = subCats.GroupBy(sc => sc.CategoryId).FirstOrDefault(g => g.Key == selectedCat.Id).ToList();
                 SubcategoryFilterCbx.DataSource = catSubcats;

@@ -1,6 +1,7 @@
 using Data.Interfaces;
 using Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using NotesApp.Categories;
 using NotesApp.UI;
 using System;
 using System.Configuration;
@@ -35,6 +36,7 @@ namespace NotesApp
             services.AddTransient<NotesForm>();
             services.AddTransient<CreateOrEditNoteForm>();
             services.AddTransient<CategoriesForm>();
+            services.AddTransient<CategoriesCache>();
                 
             return services;
         }

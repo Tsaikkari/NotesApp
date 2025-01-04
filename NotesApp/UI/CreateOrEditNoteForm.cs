@@ -16,6 +16,7 @@ namespace NotesApp
         private readonly IServiceProvider _serviceProvider;
 
         private List<NoteWithCategories> _notesCache;
+        private Category _catFilter;
         private List<Category> _categoriesCache;
         private List<Subcategory> _subcategoriesCache;
 
@@ -38,8 +39,73 @@ namespace NotesApp
         private void ShowSuccessMessage(string successMessage)
         {
             MessageBox.Show(successMessage);
+        } 
+        
+        private async void RefreshCategoriesForAdd(List<Category> cats, List<Subcategory> subcats)
+        {
+            _catFilter = (Category)CategoryCbx.SelectedItem;
+
+            List<Category> categories = await _categoriesRepository.SelectCategories();
+
+            List<Category> filterList = new List<Category>();
+            filterList.Add(new Category(0, "All notes"));
+            filterList.AddRange(categories);
+
+            CategoryCbx.DataSource = filterList;
+            CategoryCbx.DisplayMember = "Name";
+
+            RefreshSubcategories();
+
+            if (_catFilter != null && _catFilter.Id != 0)
+            {
+                int indexToSelect = FindCatIndex(_catFilter.Id);
+                CategoryCbx.SelectedIndex = indexToSelect + 1;
+            }
         }
 
+        private async void RefreshSubcategories()
+        {
+            Subcategory subCatFilter = (Subcategory)SubcategoryCbx.SelectedItem;
+
+            List<Subcategory> subCats = await _subcategoriesRepository.SelectSubcategories();
+
+            List<Subcategory> filterSubList = new List<Subcategory>();
+            filterSubList.Add(new Subcategory(0, "All notes", 0));
+            filterSubList.AddRange(subCats);
+
+            SubcategoryCbx.DataSource = filterSubList;
+            SubcategoryCbx.DisplayMember = "Name";
+
+            if (_catFilter != null && _catFilter.Id != 0)
+            {
+                if (subCatFilter != null && subCatFilter.Id != 0)
+                {
+                    FindSubcatIndex(subCatFilter.Id);
+                }
+            }
+        }
+
+        private int FindCatIndex(int categoryId)
+        {
+            List<Category> allCats = (List<Category>)CategoryCbx.DataSource;
+
+            Category matchingCat = allCats.FirstOrDefault(c => c.Id == categoryId);
+
+            int index = CategoryCbx.Items.IndexOf(matchingCat);
+            return index;
+        }
+
+        private int FindSubcatIndex(int subcategoryId)
+        {
+            List<Subcategory> allSubcats = (List<Subcategory>)SubcategoryCbx.DataSource;
+
+            Subcategory matchingSubcat = allSubcats.FirstOrDefault(c => c.Id == subcategoryId);
+
+            int index = SubcategoryCbx.Items.IndexOf(matchingSubcat);
+            return index;
+        }
+
+        // TODO: change
         private async void RefreshCategories()
         {
             _categoriesCache = await _categoriesRepository.SelectCategories();
@@ -123,7 +189,6 @@ namespace NotesApp
             NoteTxt.Text = clickedNote.NoteText;
         }
 
-
         private void CreateNote_Load(object sender, EventArgs e)
         {
             FillFormForEdit();
@@ -134,6 +199,7 @@ namespace NotesApp
         {
             CategoriesForm form = _serviceProvider.GetRequiredService<CategoriesForm>();
             form.ShowDialog();
+            form.FormClosed += (sender, e) => RefreshCategories();
         }
 
         private async void AddNoteBtn_Click(object sender, EventArgs e)
