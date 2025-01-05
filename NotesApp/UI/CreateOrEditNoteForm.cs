@@ -4,57 +4,81 @@ using Data.Repositories;
 using Domain.Models;
 using DomainModel.Models;
 using Microsoft.Extensions.DependencyInjection;
+using NotesApp.Categories;
 using NotesApp.UI;
 
 namespace NotesApp
 {
+    public enum CategoryType { Default, Selected };
+  
     public partial class CreateOrEditNoteForm : Form
     {
         private readonly INotesRepository _notesRepository;
-        private readonly ICategoriesRepository _categoriesRepository;
-        private readonly ISubcategoriesRepository _subcategoriesRepository;
         private readonly IServiceProvider _serviceProvider;
 
         private List<NoteWithCategories> _notesCache;
         private Category _catFilter;
-        private List<Category> _categoriesCache;
-        private List<Subcategory> _subcategoriesCache;
+        CategoriesCache _categoriesCache;
 
         public int NoteId { get; set; }
         public decimal LevelOfKnowledge { get; set; }
-        public string CategoryName { get; set; }
-        public string SubcategoryName { get; set; }
+        public string CatName { get; set; }
+        public string SubcatName { get; set; }
 
         public CreateOrEditNoteForm(INotesRepository notesRepository, IServiceProvider serviceProvider, ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository)
         {
             InitializeComponent();
             _notesRepository = notesRepository;
             _serviceProvider = serviceProvider;
-            _categoriesRepository = categoriesRepository;
-            _subcategoriesRepository = subcategoriesRepository;
+            _categoriesCache = _serviceProvider.GetRequiredService<CategoriesCache>();
 
             _notesRepository.OnSuccess += ShowSuccessMessage;
+            _notesRepository.OnError += OnErrorOccured;
         }
 
         private void ShowSuccessMessage(string successMessage)
         {
             MessageBox.Show(successMessage);
-        } 
-        
-        private async void RefreshCategoriesForAdd(List<Category> cats, List<Subcategory> subcats)
+        }
+        private void OnErrorOccured(string errorMessage)
+        {
+            MessageBox.Show(errorMessage);
+        }
+
+        private void RefreshCategoryAndSubcategory(CategoryType categoryType)
+        {
+            List<Category> categoryList = new List<Category>();
+            List<Subcategory> subcategoryList = new List<Subcategory>();
+
+            if (categoryType == CategoryType.Default)
+            {
+                categoryList = _categoriesCache.DefaultCategoryList;
+                CategoryCbx.DataSource = categoryList;
+
+                subcategoryList = _categoriesCache.DefaultSubcategoryList;
+                SubcategoryCbx.DataSource = subcategoryList;
+            }
+            else if (categoryType == CategoryType.Selected)
+            {
+                AddNoteBtn.Visible = false;
+                EditNoteBtn.Visible = true;
+
+                categoryList = _categoriesCache.GetSelectedCategories(CatName);
+                CategoryCbx.DataSource = categoryList;
+
+                subcategoryList = _categoriesCache.GetSelectedSubcategories(SubcatName);
+                SubcategoryCbx.DataSource = subcategoryList;
+            }
+        }
+
+        private void FilterCategories()
         {
             _catFilter = (Category)CategoryCbx.SelectedItem;
 
-            List<Category> categories = await _categoriesRepository.SelectCategories();
-
-            List<Category> filterList = new List<Category>();
-            filterList.Add(new Category(0, "All notes"));
-            filterList.AddRange(categories);
-
-            CategoryCbx.DataSource = filterList;
+            CategoryCbx.DataSource = _categoriesCache.DefaultCategoryList;
             CategoryCbx.DisplayMember = "Name";
 
-            RefreshSubcategories();
+            FilterSubcategories();
 
             if (_catFilter != null && _catFilter.Id != 0)
             {
@@ -63,15 +87,11 @@ namespace NotesApp
             }
         }
 
-        private async void RefreshSubcategories()
+        private void FilterSubcategories()
         {
             Subcategory subCatFilter = (Subcategory)SubcategoryCbx.SelectedItem;
 
-            List<Subcategory> subCats = await _subcategoriesRepository.SelectSubcategories();
-
-            List<Subcategory> filterSubList = new List<Subcategory>();
-            filterSubList.Add(new Subcategory(0, "All notes", 0));
-            filterSubList.AddRange(subCats);
+            List<Subcategory> filterSubList = _categoriesCache.DefaultSubcategoryList;
 
             SubcategoryCbx.DataSource = filterSubList;
             SubcategoryCbx.DisplayMember = "Name";
@@ -83,6 +103,17 @@ namespace NotesApp
                     FindSubcatIndex(subCatFilter.Id);
                 }
             }
+        }
+
+        private void SetCategories()
+        {
+            if (_categoriesCache.CategoryNameFirstCatList != null && _categoriesCache.CategoryNameFirstSubcatList != null && CatName != null)
+            { 
+                FillFormForEdit();
+                RefreshCategoryAndSubcategory(CategoryType.Selected);
+            }
+            else
+                RefreshCategoryAndSubcategory(CategoryType.Default);
         }
 
         private int FindCatIndex(int categoryId)
@@ -105,101 +136,34 @@ namespace NotesApp
             return index;
         }
 
-        // TODO: change
-        private async void RefreshCategories()
-        {
-            _categoriesCache = await _categoriesRepository.SelectCategories();
-            _subcategoriesCache = await _subcategoriesRepository.SelectSubcategories();
-
-            CategoryCbx.DataSource = _categoriesCache;
-            CategoryCbx.DisplayMember = "Name";
-            SubcategoryCbx.DataSource = _subcategoriesCache;
-            SubcategoryCbx.DisplayMember = "Name";
-
-            if (CategoryName != "All notes" && SubcategoryName != "All notes" && NoteId != 0)
-                SetCategories();
-            else
-            {
-                List<Category> filterList = new List<Category>();
-                filterList.Add(new Category(0, "All notes"));
-                filterList.AddRange(_categoriesCache);
-
-                CategoryCbx.DataSource = filterList;
-                CategoryCbx.DisplayMember = "Name";
-
-                List<Subcategory> filterSubList = new List<Subcategory>();
-                filterSubList.Add(new Subcategory(0, "All notes", 0));
-                filterSubList.AddRange(_subcategoriesCache);
-
-                SubcategoryCbx.DataSource = filterSubList;
-                SubcategoryCbx.DisplayMember = "Name";
-            }
-        }
-
-        private void SetCategories()
-        {
-            if (_categoriesCache != null && _subcategoriesCache != null)
-            {
-                List<Category> filterCatList = new List<Category>();
-                Category cat = _categoriesCache.FirstOrDefault(c => c.Name == CategoryName);
-
-                foreach (Category c in filterCatList)
-                {
-                    if (c.Name != CategoryName)
-                        filterCatList.Add(c);
-                }
-
-                filterCatList.Insert(0, cat);
-                CategoryCbx.DataSource = filterCatList;
-                CategoryCbx.DisplayMember = "Name";
-
-                List<Subcategory> filterSubcatList = new List<Subcategory>();
-                Subcategory subcat = _subcategoriesCache.FirstOrDefault(c => c.Name == SubcategoryName);
-
-                foreach (Subcategory c in filterSubcatList)
-                {
-                    if (c.Name != SubcategoryName)
-                        filterSubcatList.Add(c);
-                }
-
-                filterSubcatList.Insert(0, subcat);
-                SubcategoryCbx.DataSource = filterSubcatList;
-                SubcategoryCbx.DisplayMember = "Name";
-            }
-        }
-
         private void FillFormForEdit()
         {
-            if (NoteId != 0)
-            {
-                AddNoteBtn.Visible = false;
-                FillForm(NoteId);
-            }
-            else
-                AddNoteBtn.Visible = true;
+            FillForm(NoteId);
         }
 
         private async void FillForm(int? NoteId)
         {
             _notesCache = await _notesRepository.SelectNotes();
-
+          
             NoteWithCategories clickedNote = _notesCache.FirstOrDefault(n => n.Id == NoteId);
-
+         
             TitleTxtBox.Text = clickedNote.Title;
             NoteTxt.Text = clickedNote.NoteText;
         }
 
-        private void CreateNote_Load(object sender, EventArgs e)
+        private async void CreateNote_Load(object sender, EventArgs e)
         {
-            FillFormForEdit();
-            RefreshCategories();
+            await _categoriesCache.RefreshData();
+            FilterCategories();
+            SetCategories();
         }
 
         private void AddCategoryBtn_Click(object sender, EventArgs e)
         {
             CategoriesForm form = _serviceProvider.GetRequiredService<CategoriesForm>();
             form.ShowDialog();
-            form.FormClosed += (sender, e) => RefreshCategories();
+            // TODO: should refresh right away the categories in the combo boxes
+            form.FormClosed += async (sender, e) => await _categoriesCache.RefreshData();
         }
 
         private async void AddNoteBtn_Click(object sender, EventArgs e)
@@ -213,7 +177,6 @@ namespace NotesApp
 
             await _notesRepository.InsertNote(newNote);
             ClearAllFields();
-            AddNoteBtn.Visible = false;
             Close();
         }
 
@@ -271,8 +234,6 @@ namespace NotesApp
             TitleTxtBox.Text = string.Empty;
             NoteTxt.Text = string.Empty;
             NoteId = 0;
-            CategoryName = string.Empty;
-            SubcategoryName = string.Empty;
         }
     }
 }

@@ -59,14 +59,14 @@ namespace NotesApp.UI
             FilterGridData();
         }
 
-        private async Task RefreshCategories()
+        private void FilterCategories()
         {
             _catFilter = (Category)CategoryFilterCbx.SelectedItem;
 
             CategoryFilterCbx.DataSource = _categoriesCache.DefaultCategoryList;
             CategoryFilterCbx.DisplayMember = "Name";
-           
-            RefreshSubcategories();
+
+            FilterSubcategories();
 
             if (_catFilter != null && _catFilter.Id != 0)
             {
@@ -75,7 +75,7 @@ namespace NotesApp.UI
             }
         }
 
-        private async void RefreshSubcategories()
+        private void FilterSubcategories()
         {
             Subcategory subCatFilter = (Subcategory)SubcategoryFilterCbx.SelectedItem;
 
@@ -171,11 +171,13 @@ namespace NotesApp.UI
                 }
                 else if (NotesGrid.CurrentCell.OwningColumn.Name == "EditBtn")
                 {
+                    CategoryFilterCbx.DisplayMember = clickedNote.Category.ToString();
+                    SubcategoryFilterCbx.DisplayMember = clickedNote.Subcategory.ToString();
                     CreateOrEditNoteForm form = _serviceProvider.GetRequiredService<CreateOrEditNoteForm>();
                     form.NoteId = clickedNote.Id;
                     form.LevelOfKnowledge = clickedNote.LevelOfKnowledge;
-                    form.CategoryName = CategoryFilterCbx.Text;
-                    form.SubcategoryName = SubcategoryFilterCbx.Text;
+                    form.CatName = clickedNote.Category;
+                    form.SubcatName = clickedNote.Subcategory;
                     form.FormClosed += (sender, e) => RefreshNotesCache();
                     form.ShowDialog();
                 }
@@ -193,7 +195,7 @@ namespace NotesApp.UI
         {
             CustomizeGridAppearance();
             await _categoriesCache.RefreshData();
-            RefreshCategories();
+            FilterCategories();
             RefreshNotesCache();
         }
 
@@ -230,7 +232,7 @@ namespace NotesApp.UI
 
         private void CategoryFilterCbx_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RefreshSubcategories();
+            FilterSubcategories();
             FilterGridData();
             ClearNote();
             _isOpen = false;

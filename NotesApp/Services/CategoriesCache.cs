@@ -13,8 +13,9 @@ namespace NotesApp.Categories
     {
         private readonly ICategoriesRepository _categoriesRepository;
         private readonly ISubcategoriesRepository _subcategoriesRepository;
-        private string SelectedCategoryName { get; set; }
-
+        private readonly string _catName;
+        private readonly string _subcatName;
+      
         private List<Category> _categories;
         private List<Subcategory> _subcategories;
 
@@ -35,25 +36,31 @@ namespace NotesApp.Categories
             _categories = await _categoriesRepository.SelectCategories();
             _subcategories = await _subcategoriesRepository.SelectSubcategories();
 
-            ClassifyCategories(SelectedCategoryName);
+            GetDefaultCategories();
+            GetDefaultSubcategories();
+            GetSelectedCategories(_catName);
+            GetSelectedSubcategories(_subcatName);
         }
 
-        public void ClassifyCategories(string? categoryName)
+        public void GetDefaultCategories()
         {
-            // default
             DefaultCategoryList = new List<Category>();
-            DefaultSubcategoryList = new List<Subcategory>();
-
             DefaultCategoryList.Add(new Category(0, "All notes"));
             DefaultCategoryList.AddRange(_categories);
+        }
+
+        public void GetDefaultSubcategories()
+        {
+            DefaultSubcategoryList = new List<Subcategory>();
             DefaultSubcategoryList.Add(new Subcategory(0, "All notes", 0));
             DefaultSubcategoryList.AddRange(_subcategories);
+        }
 
-            // selected (for edit note)
+        public List<Category> GetSelectedCategories(string? categoryName)
+        {
             CategoryNameFirstCatList = new List<Category>();
-            CategoryNameFirstSubcatList = new List<Subcategory>();
 
-            Category cat = _categories.FirstOrDefault(c => c.Name == categoryName);
+            Category cat= _categories.FirstOrDefault(c => c.Name == categoryName);
 
             foreach (Category c in CategoryNameFirstCatList)
             {
@@ -63,7 +70,14 @@ namespace NotesApp.Categories
                 }
             }
             CategoryNameFirstCatList.Insert(0, cat);
+            CategoryNameFirstCatList.AddRange(_categories);
+            return CategoryNameFirstCatList;
+        }
 
+        public List<Subcategory> GetSelectedSubcategories(string? categoryName)
+        {
+            CategoryNameFirstSubcatList = new List<Subcategory>();
+         
             Subcategory subcat = _subcategories.FirstOrDefault(sc => sc.Name == categoryName);
 
             foreach (Subcategory sc in CategoryNameFirstSubcatList)
@@ -74,6 +88,8 @@ namespace NotesApp.Categories
                 }
             }
             CategoryNameFirstSubcatList.Insert(0, subcat);
+            CategoryNameFirstSubcatList.AddRange(_subcategories);
+            return CategoryNameFirstSubcatList;
         }
     }
 }
