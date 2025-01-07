@@ -127,7 +127,6 @@
             Margin = new Padding(4, 5, 4, 5);
             Name = "CategoriesForm";
             Text = "Add categories";
-            FormClosed += CategoriesForm_FormClosed;
             Load += CategoriesForm_Load;
             ResumeLayout(false);
             PerformLayout();

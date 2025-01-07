@@ -18,4 +18,10 @@
     <ProjectReference Include="..\Domain\DomainModel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="styleConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

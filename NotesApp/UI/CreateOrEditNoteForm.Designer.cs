@@ -125,6 +125,8 @@
             SubcategoryCbx.Name = "SubcategoryCbx";
             SubcategoryCbx.Size = new Size(489, 46);
             SubcategoryCbx.TabIndex = 9;
+            SubcategoryCbx.DropDown += SubcategoryCbx_DropDown;
+            SubcategoryCbx.SelectedIndexChanged += SubcategoryCbx_SelectedIndexChanged;
             // 
             // AddCategoryBtn
             // 
