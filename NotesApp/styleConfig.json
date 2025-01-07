@@ -1,0 +1,18 @@
+﻿{
+  "primaryBg": "#2d425b",
+  "secondaryBg": "#202d40",
+  "primaryFg": "white",
+  "primaryBtnBg": "#29594f",
+  "secondaryBtnBg": "indianRed",
+  "tertiariBtnBg": "#e88f41",
+  "primaryBtnFg": "white",
+  "secondaryBtnFg": "white",
+  "tertiariBtnFg": "white",
+  "redBtnBg": "#ba161f",
+  "orangeBtnBg": "#c95c18",
+  "yellowBtnBg": "#facc15",
+  "greenBtnBg": "#21a515",
+  "turqoiseBtnBg": "#18acc9",
+  "blueBtnBg": "#1c4185",
+  "purpleBtnBg": "#662187"
+}
