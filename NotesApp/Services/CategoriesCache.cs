@@ -15,9 +15,10 @@ namespace NotesApp.Categories
         private readonly ISubcategoriesRepository _subcategoriesRepository;
         private readonly string _catName;
         private readonly string _subcatName;
-      
+    
         private List<Category> _categories;
         private List<Subcategory> _subcategories;
+        private List<Subcategory> _groupSubcategories;
 
         public List<Category> DefaultCategoryList;
         public List<Subcategory> DefaultSubcategoryList;
@@ -35,6 +36,7 @@ namespace NotesApp.Categories
         {
             _categories = await _categoriesRepository.SelectCategories();
             _subcategories = await _subcategoriesRepository.SelectSubcategories();
+            
 
             GetDefaultCategories();
             GetDefaultSubcategories();
@@ -62,7 +64,7 @@ namespace NotesApp.Categories
 
             Category cat= _categories.FirstOrDefault(c => c.Name == categoryName);
 
-            foreach (Category c in CategoryNameFirstCatList)
+            foreach (Category c in _categories)
             {
                 if (c.Name != categoryName)
                 {
@@ -80,7 +82,7 @@ namespace NotesApp.Categories
          
             Subcategory subcat = _subcategories.FirstOrDefault(sc => sc.Name == categoryName);
 
-            foreach (Subcategory sc in CategoryNameFirstSubcatList)
+            foreach (Subcategory sc in _subcategories)
             {
                 if (!sc.Name.Equals(categoryName))
                 {

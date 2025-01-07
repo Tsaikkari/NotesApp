@@ -12,5 +12,6 @@ namespace Data.Interfaces
         public event Action<string> OnError;
         public Task InsertSubcategory(Subcategory subcategory);
         public Task<List<Subcategory>> SelectSubcategories();
+        public Task<List<Subcategory>> SelectGroupSubcategories(int Id);
     }
 }

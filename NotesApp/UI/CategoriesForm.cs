@@ -1,4 +1,5 @@
-﻿using Data.Interfaces;
+﻿using Data.CustomQueryResults;
+using Data.Interfaces;
 using Data.Repositories;
 using DomainModel.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,7 @@ namespace NotesApp.UI
         private Category _category;
         CategoriesCache _categoriesCache;
 
-        public CategoriesForm(ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository, IServiceProvider serviceProvider)
+        public CategoriesForm(ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository, IServiceProvider serviceProvider, INotesRepository notesRepository)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
@@ -34,9 +35,8 @@ namespace NotesApp.UI
             _categoriesCache = _serviceProvider.GetRequiredService<CategoriesCache>();
         }
 
-        private async void RefreshCategoryList()
+        private void RefreshCategoryList()
         {
-            //CategoriesLbx.DataSource = await _categoriesRepository.SelectCategories();
             CategoriesLbx.DataSource = _categoriesCache.DefaultCategoryList;
             CategoriesLbx.DisplayMember = "Name";
         }
@@ -52,6 +52,7 @@ namespace NotesApp.UI
             await _categoriesCache.RefreshData();
             RefreshCategoryList();
             RefreshSubcategoryList();
+            RefreshSubcategoryList();
         }
 
         private async void AddCategoryBtn_Click(object sender, EventArgs e)
@@ -65,6 +66,7 @@ namespace NotesApp.UI
             await _categoriesCache.RefreshData();
             RefreshCategoryList();
             NewCategoryTxt.Text = "";
+            SubcategoriesLbx.Visible = true;
         }
 
         private async void AddSubcategoryBtn_Click(object sender, EventArgs e)
@@ -85,7 +87,7 @@ namespace NotesApp.UI
                 await _categoriesCache.RefreshData();
                 RefreshSubcategoryList();
                 NewSubcategoryTxt.Text = "";
-                Close();
+                //Close();
             }
         }
 
@@ -93,11 +95,6 @@ namespace NotesApp.UI
         {
             ListBox lbx = (ListBox)sender;
             _category = (Category)lbx.Items[lbx.SelectedIndex];
-        }
-
-        private async void CategoriesForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //await _categoriesCache.RefreshData();
         }
     }
 }

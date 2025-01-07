@@ -117,6 +117,7 @@
             CategoryCbx.Name = "CategoryCbx";
             CategoryCbx.Size = new Size(489, 46);
             CategoryCbx.TabIndex = 8;
+            CategoryCbx.SelectedIndexChanged += CategoryCbx_SelectedIndexChanged;
             // 
             // SubcategoryCbx
             // 
@@ -125,6 +126,7 @@
             SubcategoryCbx.Name = "SubcategoryCbx";
             SubcategoryCbx.Size = new Size(489, 46);
             SubcategoryCbx.TabIndex = 9;
+            SubcategoryCbx.SelectedIndexChanged += SubcategoryCbx_SelectedIndexChanged;
             // 
             // AddCategoryBtn
             // 
@@ -164,6 +166,7 @@
             Margin = new Padding(4);
             Name = "CreateOrEditNoteForm";
             Text = "Note";
+            FormClosed += CreateOrEditNoteForm_FormClosed;
             Load += CreateNote_Load;
             ResumeLayout(false);
             PerformLayout();

@@ -56,5 +56,27 @@ namespace Data.Repositories
                 return new List<Subcategory>();
             }
         }
+
+        public async Task<List<Subcategory>> SelectGroupSubcategories(int CategoryId)
+        {
+            try
+            {
+                string query = @$"SELECT sc.Id, sc.Name, sc.CategoryId
+                               FROM Subcategories AS sc
+                               JOIN Categories AS c ON sc.CategoryId = c.Id
+                               WHERE sc.CategoryId = {CategoryId}
+                               GROUP BY sc.Id, sc.Name, CategoryId";
+
+                using (IDbConnection connection = new SqlConnection(ConnectionHelper.ConnectionString))
+                {
+                    return (await connection.QueryAsync<Subcategory>(query)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorOccured("An error happened while fetching subcategories.");
+                return new List<Subcategory>();
+            }
+        }
     }
 }
