@@ -182,7 +182,6 @@ namespace NotesApp.UI
                 }
             };
 
-
             NotesGrid.RowHeadersVisible = false;
             NotesGrid.Columns.Clear();
             NotesGrid.Columns.AddRange(columns);
