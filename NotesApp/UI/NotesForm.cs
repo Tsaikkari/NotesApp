@@ -23,7 +23,7 @@ using System.Diagnostics.Metrics;
 
 namespace NotesApp.UI
 {
-    
+
     public partial class NotesForm : Form
     {
         private readonly INotesRepository _notesRepository;
@@ -36,7 +36,7 @@ namespace NotesApp.UI
         private Category _catFilter;
         private bool _isOpen = false;
         private int noteToEditId;
-      
+
         public NotesForm(INotesRepository notesRepository, IServiceProvider serviceProvider)
         {
             InitializeComponent();
@@ -239,7 +239,7 @@ namespace NotesApp.UI
             foreach (var subcatGroup in groupSubcategories)
             {
                 int catId = subcatGroup.Key;
-              
+
                 foreach (var sc in subcatGroup)
                 {
                     if (_catFilter.Id == catId)
@@ -321,7 +321,7 @@ namespace NotesApp.UI
 
             if (KnowledgeLevelNum.Value == 0)
                 MessageBox.Show("Please enter knowledge level.\n\n");
-            
+
             if (noteToEditId != 0)
             {
                 NoteWithCategories note = _notesCache.FirstOrDefault(n => n.Id == noteToEditId);
@@ -364,6 +364,34 @@ namespace NotesApp.UI
         private void NotesGrid_RowsDefaultCellStyleChanged(object sender, EventArgs e)
         {
 
+        }
+
+        // TODO: button for making his optional
+        private void NotesGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            foreach (DataGridViewRow row in NotesGrid.Rows)
+            {
+                decimal knowledgeLevel = Convert.ToDecimal(row.Cells[5].Value);
+                if (knowledgeLevel == 1)
+                    row.DefaultCellStyle.BackColor = Color.Red;
+                else if (knowledgeLevel == 2)
+                    row.DefaultCellStyle.BackColor = Color.Orange;
+                else if (knowledgeLevel == 3)
+                    row.DefaultCellStyle.BackColor = Color.Yellow;
+                else if (knowledgeLevel == 4)
+                    row.DefaultCellStyle.BackColor = Color.Green;
+                else if (knowledgeLevel == 5)
+                    row.DefaultCellStyle.BackColor = Color.Turquoise;
+                else if (knowledgeLevel == 6)
+                    row.DefaultCellStyle.BackColor = Color.Blue;
+                else if (knowledgeLevel == 7)
+                    row.DefaultCellStyle.BackColor = Color.Purple;
+                else
+                {
+                    row.DefaultCellStyle.BackColor = Color.White;
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                }     
+            }
         }
     }
 }

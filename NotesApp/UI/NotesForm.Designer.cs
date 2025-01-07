@@ -56,6 +56,7 @@
             NotesGrid.TabIndex = 0;
             NotesGrid.RowsDefaultCellStyleChanged += NotesGrid_RowsDefaultCellStyleChanged;
             NotesGrid.CellClick += NotesGrid_CellClick;
+            NotesGrid.CellFormatting += NotesGrid_CellFormatting;
             // 
             // NewNoteBtn
             // 
