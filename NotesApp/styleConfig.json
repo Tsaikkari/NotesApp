@@ -8,12 +8,12 @@
   "primaryBtnFg": "white",
   "secondaryBtnFg": "white",
   "tertiariBtnFg": "white",
-  "redBtnBg": "#ba161f",
-  "orangeBtnBg": "#c95c18",
-  "yellowBtnBg": "#facc15",
-  "greenBtnBg": "#21a515",
-  "turqoiseBtnBg": "#18acc9",
-  "blueBtnBg": "#1c4185",
-  "purpleBtnBg": "#662187",
+  "redLevelBg": "#ba161f",
+  "orangeLevelBg": "#c95c18",
+  "yellowLevelBg": "#facc15",
+  "greenLevelBg": "#21a515",
+  "turquoiseLevelBg": "#18acc9",
+  "blueLevelBg": "#1c4185",
+  "purpleLevelBg": "#662187"
 
 }

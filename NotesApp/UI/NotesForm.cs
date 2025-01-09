@@ -128,7 +128,7 @@ namespace NotesApp.UI
         {
             NotesGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             NotesGrid.AutoGenerateColumns = false;
-            JObject styleConfig = ConfigManager.LoadStyleDonfig();
+            JObject styleConfig = ConfigManager.LoadStyleConfig();
 
             DataGridViewColumn[] columns = new DataGridViewColumn[8];
 
@@ -217,6 +217,7 @@ namespace NotesApp.UI
                     NoteTxt.Text = clickedNote.NoteText;
                     KnowledgeLevelNum.Value = clickedNote.LevelOfKnowledge;
                     noteToEditId = clickedNote.Id;
+                    ToFileBtn.Visible = true;
                 }
             }
         }
@@ -228,6 +229,7 @@ namespace NotesApp.UI
             FilterCategories();
             FilterSubcategories();
             RefreshNotesCache();
+            ToFileBtn.Visible = false;
         }
 
         private void SetSubcategoryList(Category _catFilter, Subcategory? subCatFilter)
@@ -337,7 +339,7 @@ namespace NotesApp.UI
 
         private void StyleForm()
         {
-            JObject styleConfig = ConfigManager.LoadStyleDonfig();
+            JObject styleConfig = ConfigManager.LoadStyleConfig();
 
             string primaryBg = (string)styleConfig["primaryBg"];
             string secondaryBg = (string)styleConfig["secondaryBg"];
@@ -353,6 +355,11 @@ namespace NotesApp.UI
             NewNoteBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["primaryBtnFg"]);
             EditKnowledgeLevelBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnBg"]);
             EditKnowledgeLevelBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnFg"]);
+            ShowLevelBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["secondaryBtnBg"]);
+            ShowLevelBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["secondaryBtnFg"]);
+            HideLevelBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["secondaryBtnBg"]);
+            HideLevelBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["secondaryBtnFg"]);
+
             NotesGrid.BackgroundColor = ColorTranslator.FromHtml(primaryBg);
             NotesGrid.ColumnHeadersDefaultCellStyle.BackColor = ColorTranslator.FromHtml(secondaryBg);
             NotesGrid.ColumnHeadersDefaultCellStyle.ForeColor = ColorTranslator.FromHtml(primaryFg);
@@ -361,9 +368,76 @@ namespace NotesApp.UI
             NotesGrid.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
         }
 
-        private void NotesGrid_RowsDefaultCellStyleChanged(object sender, EventArgs e)
+        private void ShowLevelBtn_Click(object sender, EventArgs e)
         {
+            JObject styleConfig = ConfigManager.LoadStyleConfig();
 
+            foreach (DataGridViewRow row in NotesGrid.Rows)
+            {
+                decimal knowledgeLevel = Convert.ToDecimal(row.Cells[5].Value);
+                if (knowledgeLevel == 1)
+                    row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml((string)styleConfig["redLevelBg"]);
+                else if (knowledgeLevel == 2)
+                    row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml((string)styleConfig["orangeLevelBg"]);
+                else if (knowledgeLevel == 3)
+                    row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml((string)styleConfig["yellowLevelBg"]);
+                else if (knowledgeLevel == 4)
+                    row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml((string)styleConfig["greenLevelBg"]);
+                else if (knowledgeLevel == 5)
+                    row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml((string)styleConfig["turquoiseLevelBg"]);
+                else if (knowledgeLevel == 6)
+                    row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml((string)styleConfig["blueLevelBg"]);
+                else if (knowledgeLevel == 7)
+                    row.DefaultCellStyle.BackColor = ColorTranslator.FromHtml((string)styleConfig["purpleLevelBg"]);
+                else
+                {
+                    row.DefaultCellStyle.BackColor = Color.White;
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                }
+            }
+
+            ShowLevelBtn.Visible = false;
+            HideLevelBtn.Visible = true;
+        }
+
+        private void HideLevelBtn_Click(object sender, EventArgs e)
+        {
+            CustomizeGridAppearance();
+            ShowLevelBtn.Visible = true;
+            HideLevelBtn.Visible = false;
+        }
+
+        private void ToFileBtn_Click(object sender, EventArgs e)
+        {
+            if (NoteTitleLbl.Text == "" || NoteTxt.Text == "")
+            {
+                MessageBox.Show("Please choose a note.");
+                return;
+            }
+
+            string note = "";
+            note += $"{TitleLbl.Text}\n";
+            note += NoteTxt.Text;
+
+            try
+            {
+                string fileName = $"{TitleLbl.Text}.txt";
+                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string filePath = Path.Combine(desktopPath, fileName);
+                using (StreamWriter sw = new StreamWriter(filePath))
+                {
+                    sw.WriteLine(note);
+                }
+                NoteTitleLbl.Text = "";
+                NoteTxt.Text = "";
+                ToFileBtn.Visible = false;
+
+                MessageBox.Show("File created.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while creating file.");
+            }
         }
 
         // TODO: button for making his optional
