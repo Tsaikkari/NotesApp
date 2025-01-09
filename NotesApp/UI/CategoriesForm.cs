@@ -56,7 +56,7 @@ namespace NotesApp.UI
             SubcategoriesLbx.DisplayMember = "Name";
         }
 
-        private async void CategoriesForm_Load(object sender, EventArgs e)
+        private void CategoriesForm_Load(object sender, EventArgs e)
         {
             RefreshCategoryList();
             RefreshSubcategoryList();

@@ -198,6 +198,7 @@ namespace NotesApp.UI
                     await _notesRepository.DeleteNote(clickedNote.Id);
                     RefreshNotesCache();
                     ClearNote();
+                    ToFileBtn.Visible = false;
                 }
                 else if (NotesGrid.CurrentCell.OwningColumn.Name == "EditBtn")
                 {
@@ -416,14 +417,14 @@ namespace NotesApp.UI
             }
 
             string note = "";
-            note += $"{TitleLbl.Text}\n";
+            note += $"{NoteTitleLbl.Text}\n";
             note += NoteTxt.Text;
-
+            string fileName = NoteTitleLbl.Text;
             try
             {
-                string fileName = $"{TitleLbl.Text}.txt";
+                
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string filePath = Path.Combine(desktopPath, fileName);
+                string filePath = Path.Combine(desktopPath, fileName + ".txt");
                 using (StreamWriter sw = new StreamWriter(filePath))
                 {
                     sw.WriteLine(note);
