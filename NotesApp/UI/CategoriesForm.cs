@@ -3,6 +3,7 @@ using Data.Interfaces;
 using Data.Repositories;
 using DomainModel.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using NotesApp.Categories;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,8 @@ namespace NotesApp.UI
 
         private Category _category;
         CategoriesCache _categoriesCache;
+        private List<Category> _categories;
+        private List<Subcategory> _subcategories;
 
         public CategoriesForm(ICategoriesRepository categoriesRepository, ISubcategoriesRepository subcategoriesRepository, IServiceProvider serviceProvider, INotesRepository notesRepository)
         {
@@ -33,25 +36,29 @@ namespace NotesApp.UI
             _categoriesRepository = categoriesRepository;
             _subcategoriesRepository = subcategoriesRepository;
             _categoriesCache = _serviceProvider.GetRequiredService<CategoriesCache>();
+
+            StyleForm();
         }
 
-        private void RefreshCategoryList()
+        private async void RefreshCategoryList()
         {
-            CategoriesLbx.DataSource = _categoriesCache.DefaultCategoryList;
+            _categories = await _categoriesRepository.SelectCategories();
+            await _categoriesCache.RefreshData();
+            CategoriesLbx.DataSource = _categories;
             CategoriesLbx.DisplayMember = "Name";
         }
 
-        private void RefreshSubcategoryList()
+        private async void RefreshSubcategoryList()
         {
-            SubcategoriesLbx.DataSource = _categoriesCache.DefaultSubcategoryList;
+            _subcategories = await _subcategoriesRepository.SelectSubcategories();
+            await _categoriesCache.RefreshData();
+            SubcategoriesLbx.DataSource = _subcategories;
             SubcategoriesLbx.DisplayMember = "Name";
         }
 
         private async void CategoriesForm_Load(object sender, EventArgs e)
         {
-            await _categoriesCache.RefreshData();
             RefreshCategoryList();
-            RefreshSubcategoryList();
             RefreshSubcategoryList();
         }
 
@@ -63,7 +70,6 @@ namespace NotesApp.UI
             newCategory.Name = NewCategoryTxt.Text;
 
             await _categoriesRepository.InsertCategory(newCategory);
-            await _categoriesCache.RefreshData();
             RefreshCategoryList();
             NewCategoryTxt.Text = "";
             SubcategoriesLbx.Visible = true;
@@ -84,7 +90,6 @@ namespace NotesApp.UI
             else
             {
                 await _subcategoriesRepository.InsertSubcategory(newSubcategory);
-                await _categoriesCache.RefreshData();
                 RefreshSubcategoryList();
                 NewSubcategoryTxt.Text = "";
                 //Close();
@@ -95,6 +100,25 @@ namespace NotesApp.UI
         {
             ListBox lbx = (ListBox)sender;
             _category = (Category)lbx.Items[lbx.SelectedIndex];
+        }
+
+        private void StyleForm()
+        {
+            JObject styleConfig = ConfigManager.LoadStyleConfig();
+
+            string primaryBg = (string)styleConfig["primaryBg"];
+            string secondaryBg = (string)styleConfig["secondaryBg"];
+            string primaryFg = (string)styleConfig["primaryFg"];
+            string secondaryFg = (string)styleConfig["secondaryFg"];
+
+            CategoriesLbx.BackColor = ColorTranslator.FromHtml(primaryBg);
+            SubcategoriesLbx.BackColor = ColorTranslator.FromHtml(secondaryBg);
+
+
+            AddCategoryBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["primaryBtnBg"]);
+            AddCategoryBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["primaryBtnFg"]);
+            AddSubcategoryBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnBg"]);
+            AddSubcategoryBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnFg"]);
         }
     }
 }

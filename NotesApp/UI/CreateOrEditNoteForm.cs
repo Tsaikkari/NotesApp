@@ -4,6 +4,7 @@ using Data.Repositories;
 using Domain.Models;
 using DomainModel.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using NotesApp.Categories;
 using NotesApp.UI;
 using System.Windows.Forms;
@@ -36,6 +37,8 @@ namespace NotesApp
 
             _notesRepository.OnSuccess += ShowSuccessMessage;
             _notesRepository.OnError += OnErrorOccured;
+
+            ApplyStyles();
         }
 
         private void ShowSuccessMessage(string successMessage)
@@ -289,14 +292,19 @@ namespace NotesApp
             NoteId = 0;
         }
 
-        private void SubcategoryCbx_SelectedIndexChanged(object sender, EventArgs e)
+        private void ApplyStyles()
         {
-           
-        }
+            JObject styleConfig = ConfigManager.LoadStyleConfig();
 
-        private void SubcategoryCbx_DropDown(object sender, EventArgs e)
-        {
-            //FilterCategories();
+            string tertiaryBtnBg = (string)styleConfig["tertiariBtnBg"];
+
+            this.BackColor = Color.FromArgb(45, 66, 91);
+            AddCategoryBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["primaryBtnBg"]);
+            AddCategoryBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["primaryBtnFg"]);
+            EditNoteBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnBg"]);
+            EditNoteBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnFg"]);
+            AddNoteBtn.BackColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnBg"]);
+            AddNoteBtn.ForeColor = ColorTranslator.FromHtml((string)styleConfig["tertiariBtnFg"]);
         }
     }
 }

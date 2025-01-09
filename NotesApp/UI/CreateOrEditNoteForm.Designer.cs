@@ -44,6 +44,7 @@
             // TitleLbl
             // 
             TitleLbl.AutoSize = true;
+            TitleLbl.ForeColor = Color.White;
             TitleLbl.Location = new Point(18, 32);
             TitleLbl.Margin = new Padding(4, 0, 4, 0);
             TitleLbl.Name = "TitleLbl";
@@ -54,6 +55,7 @@
             // CategoryLbl
             // 
             CategoryLbl.AutoSize = true;
+            CategoryLbl.ForeColor = Color.White;
             CategoryLbl.Location = new Point(18, 93);
             CategoryLbl.Margin = new Padding(4, 0, 4, 0);
             CategoryLbl.Name = "CategoryLbl";
@@ -64,6 +66,7 @@
             // SubcategoryLbl
             // 
             SubcategoryLbl.AutoSize = true;
+            SubcategoryLbl.ForeColor = Color.White;
             SubcategoryLbl.Location = new Point(18, 156);
             SubcategoryLbl.Margin = new Padding(4, 0, 4, 0);
             SubcategoryLbl.Name = "SubcategoryLbl";
@@ -74,6 +77,7 @@
             // TextLbl
             // 
             TextLbl.AutoSize = true;
+            TextLbl.ForeColor = Color.White;
             TextLbl.Location = new Point(18, 231);
             TextLbl.Margin = new Padding(4, 0, 4, 0);
             TextLbl.Name = "TextLbl";
@@ -83,7 +87,9 @@
             // 
             // EditNoteBtn
             // 
-            EditNoteBtn.Location = new Point(227, 626);
+            EditNoteBtn.FlatAppearance.BorderSize = 0;
+            EditNoteBtn.FlatStyle = FlatStyle.Flat;
+            EditNoteBtn.Location = new Point(227, 612);
             EditNoteBtn.Margin = new Padding(4);
             EditNoteBtn.Name = "EditNoteBtn";
             EditNoteBtn.Size = new Size(643, 66);
@@ -94,7 +100,9 @@
             // 
             // AddNoteBtn
             // 
-            AddNoteBtn.Location = new Point(227, 621);
+            AddNoteBtn.FlatAppearance.BorderSize = 0;
+            AddNoteBtn.FlatStyle = FlatStyle.Flat;
+            AddNoteBtn.Location = new Point(227, 607);
             AddNoteBtn.Margin = new Padding(4);
             AddNoteBtn.Name = "AddNoteBtn";
             AddNoteBtn.Size = new Size(643, 71);
@@ -105,6 +113,7 @@
             // 
             // TitleTxtBox
             // 
+            TitleTxtBox.BorderStyle = BorderStyle.FixedSingle;
             TitleTxtBox.Location = new Point(227, 29);
             TitleTxtBox.Name = "TitleTxtBox";
             TitleTxtBox.Size = new Size(643, 45);
@@ -112,6 +121,7 @@
             // 
             // CategoryCbx
             // 
+            CategoryCbx.FlatStyle = FlatStyle.Flat;
             CategoryCbx.FormattingEnabled = true;
             CategoryCbx.Location = new Point(227, 93);
             CategoryCbx.Name = "CategoryCbx";
@@ -120,16 +130,17 @@
             // 
             // SubcategoryCbx
             // 
+            SubcategoryCbx.FlatStyle = FlatStyle.Flat;
             SubcategoryCbx.FormattingEnabled = true;
             SubcategoryCbx.Location = new Point(227, 156);
             SubcategoryCbx.Name = "SubcategoryCbx";
             SubcategoryCbx.Size = new Size(489, 46);
             SubcategoryCbx.TabIndex = 9;
-            SubcategoryCbx.DropDown += SubcategoryCbx_DropDown;
-            SubcategoryCbx.SelectedIndexChanged += SubcategoryCbx_SelectedIndexChanged;
             // 
             // AddCategoryBtn
             // 
+            AddCategoryBtn.FlatAppearance.BorderSize = 0;
+            AddCategoryBtn.FlatStyle = FlatStyle.Flat;
             AddCategoryBtn.Location = new Point(740, 93);
             AddCategoryBtn.Name = "AddCategoryBtn";
             AddCategoryBtn.Size = new Size(130, 46);
@@ -140,6 +151,7 @@
             // 
             // NoteTxt
             // 
+            NoteTxt.BorderStyle = BorderStyle.FixedSingle;
             NoteTxt.Location = new Point(227, 228);
             NoteTxt.Name = "NoteTxt";
             NoteTxt.Size = new Size(643, 361);

@@ -37,7 +37,10 @@
             NoteTxt = new RichTextBox();
             EditKnowledgeLevelBtn = new Button();
             LeftPanel = new Panel();
+            ShowLevelBtn = new Button();
             RightPanel = new Panel();
+            ToFileBtn = new Button();
+            HideLevelBtn = new Button();
             NoteTitleLbl = new Label();
             ((System.ComponentModel.ISupportInitialize)NotesGrid).BeginInit();
             ((System.ComponentModel.ISupportInitialize)KnowledgeLevelNum).BeginInit();
@@ -54,7 +57,6 @@
             NotesGrid.RowHeadersWidth = 62;
             NotesGrid.Size = new Size(1060, 661);
             NotesGrid.TabIndex = 0;
-            NotesGrid.RowsDefaultCellStyleChanged += NotesGrid_RowsDefaultCellStyleChanged;
             NotesGrid.CellClick += NotesGrid_CellClick;
             // 
             // NewNoteBtn
@@ -86,6 +88,7 @@
             // CategoryFilterCbx
             // 
             CategoryFilterCbx.DropDownStyle = ComboBoxStyle.DropDownList;
+            CategoryFilterCbx.FlatStyle = FlatStyle.Flat;
             CategoryFilterCbx.FormattingEnabled = true;
             CategoryFilterCbx.Location = new Point(22, 17);
             CategoryFilterCbx.Name = "CategoryFilterCbx";
@@ -96,6 +99,7 @@
             // SubcategoryFilterCbx
             // 
             SubcategoryFilterCbx.DropDownStyle = ComboBoxStyle.DropDownList;
+            SubcategoryFilterCbx.FlatStyle = FlatStyle.Flat;
             SubcategoryFilterCbx.FormattingEnabled = true;
             SubcategoryFilterCbx.Location = new Point(22, 81);
             SubcategoryFilterCbx.Name = "SubcategoryFilterCbx";
@@ -114,6 +118,7 @@
             // 
             // NoteTxt
             // 
+            NoteTxt.BorderStyle = BorderStyle.FixedSingle;
             NoteTxt.Location = new Point(20, 81);
             NoteTxt.Name = "NoteTxt";
             NoteTxt.Size = new Size(584, 643);
@@ -129,9 +134,9 @@
             EditKnowledgeLevelBtn.ForeColor = Color.FromArgb(32, 45, 64);
             EditKnowledgeLevelBtn.Location = new Point(376, 753);
             EditKnowledgeLevelBtn.Name = "EditKnowledgeLevelBtn";
-            EditKnowledgeLevelBtn.Size = new Size(228, 55);
+            EditKnowledgeLevelBtn.Size = new Size(104, 55);
             EditKnowledgeLevelBtn.TabIndex = 8;
-            EditKnowledgeLevelBtn.Text = "Edit knowledge";
+            EditKnowledgeLevelBtn.Text = "Edit ";
             EditKnowledgeLevelBtn.UseVisualStyleBackColor = false;
             EditKnowledgeLevelBtn.Click += EditKnowledgeLevelBtn_Click;
             // 
@@ -147,9 +152,24 @@
             LeftPanel.Size = new Size(1098, 840);
             LeftPanel.TabIndex = 9;
             // 
+            // ShowLevelBtn
+            // 
+            ShowLevelBtn.FlatAppearance.BorderSize = 0;
+            ShowLevelBtn.FlatStyle = FlatStyle.Flat;
+            ShowLevelBtn.Location = new Point(500, 753);
+            ShowLevelBtn.Name = "ShowLevelBtn";
+            ShowLevelBtn.Size = new Size(104, 55);
+            ShowLevelBtn.TabIndex = 6;
+            ShowLevelBtn.Text = "Show";
+            ShowLevelBtn.UseVisualStyleBackColor = true;
+            ShowLevelBtn.Click += ShowLevelBtn_Click;
+            // 
             // RightPanel
             // 
             RightPanel.BackColor = Color.FromArgb(32, 45, 64);
+            RightPanel.Controls.Add(ToFileBtn);
+            RightPanel.Controls.Add(ShowLevelBtn);
+            RightPanel.Controls.Add(HideLevelBtn);
             RightPanel.Controls.Add(NoteTitleLbl);
             RightPanel.Controls.Add(NoteTxt);
             RightPanel.Controls.Add(EditKnowledgeLevelBtn);
@@ -161,6 +181,31 @@
             RightPanel.Name = "RightPanel";
             RightPanel.Size = new Size(633, 840);
             RightPanel.TabIndex = 10;
+            // 
+            // ToFileBtn
+            // 
+            ToFileBtn.FlatAppearance.BorderSize = 0;
+            ToFileBtn.FlatStyle = FlatStyle.Flat;
+            ToFileBtn.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            ToFileBtn.Location = new Point(486, 17);
+            ToFileBtn.Name = "ToFileBtn";
+            ToFileBtn.Size = new Size(118, 48);
+            ToFileBtn.TabIndex = 6;
+            ToFileBtn.Text = ".txt";
+            ToFileBtn.UseVisualStyleBackColor = true;
+            ToFileBtn.Click += ToFileBtn_Click;
+            // 
+            // HideLevelBtn
+            // 
+            HideLevelBtn.FlatAppearance.BorderSize = 0;
+            HideLevelBtn.FlatStyle = FlatStyle.Flat;
+            HideLevelBtn.Location = new Point(500, 753);
+            HideLevelBtn.Name = "HideLevelBtn";
+            HideLevelBtn.Size = new Size(104, 55);
+            HideLevelBtn.TabIndex = 7;
+            HideLevelBtn.Text = "Hide";
+            HideLevelBtn.UseVisualStyleBackColor = true;
+            HideLevelBtn.Click += HideLevelBtn_Click;
             // 
             // NoteTitleLbl
             // 
@@ -207,5 +252,8 @@
         private Panel LeftPanel;
         private Panel RightPanel;
         private Label NoteTitleLbl;
+        private Button ShowLevelBtn;
+        private Button HideLevelBtn;
+        private Button ToFileBtn;
     }
 }

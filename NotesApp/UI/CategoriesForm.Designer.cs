@@ -41,6 +41,7 @@
             // NewCategoryLbl
             // 
             NewCategoryLbl.AutoSize = true;
+            NewCategoryLbl.ForeColor = Color.White;
             NewCategoryLbl.Location = new Point(28, 32);
             NewCategoryLbl.Margin = new Padding(4, 0, 4, 0);
             NewCategoryLbl.Name = "NewCategoryLbl";
@@ -51,7 +52,8 @@
             // NewSubcategoryLbl
             // 
             NewSubcategoryLbl.AutoSize = true;
-            NewSubcategoryLbl.Location = new Point(489, 32);
+            NewSubcategoryLbl.ForeColor = Color.White;
+            NewSubcategoryLbl.Location = new Point(452, 32);
             NewSubcategoryLbl.Name = "NewSubcategoryLbl";
             NewSubcategoryLbl.Size = new Size(177, 38);
             NewSubcategoryLbl.TabIndex = 1;
@@ -59,6 +61,7 @@
             // 
             // NewCategoryTxt
             // 
+            NewCategoryTxt.BorderStyle = BorderStyle.FixedSingle;
             NewCategoryTxt.Location = new Point(28, 82);
             NewCategoryTxt.Name = "NewCategoryTxt";
             NewCategoryTxt.Size = new Size(409, 45);
@@ -66,13 +69,15 @@
             // 
             // NewSubcategoryTxt
             // 
-            NewSubcategoryTxt.Location = new Point(489, 82);
+            NewSubcategoryTxt.BorderStyle = BorderStyle.FixedSingle;
+            NewSubcategoryTxt.Location = new Point(452, 82);
             NewSubcategoryTxt.Name = "NewSubcategoryTxt";
             NewSubcategoryTxt.Size = new Size(404, 45);
             NewSubcategoryTxt.TabIndex = 3;
             // 
             // CategoriesLbx
             // 
+            CategoriesLbx.ForeColor = Color.White;
             CategoriesLbx.FormattingEnabled = true;
             CategoriesLbx.ItemHeight = 38;
             CategoriesLbx.Location = new Point(28, 144);
@@ -83,15 +88,19 @@
             // 
             // SubcategoriesLbx
             // 
+            SubcategoriesLbx.ForeColor = Color.White;
             SubcategoriesLbx.FormattingEnabled = true;
             SubcategoriesLbx.ItemHeight = 38;
-            SubcategoriesLbx.Location = new Point(489, 144);
+            SubcategoriesLbx.Location = new Point(452, 144);
             SubcategoriesLbx.Name = "SubcategoriesLbx";
             SubcategoriesLbx.Size = new Size(404, 422);
             SubcategoriesLbx.TabIndex = 5;
             // 
             // AddCategoryBtn
             // 
+            AddCategoryBtn.FlatAppearance.BorderSize = 0;
+            AddCategoryBtn.FlatStyle = FlatStyle.Flat;
+            AddCategoryBtn.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
             AddCategoryBtn.Location = new Point(28, 586);
             AddCategoryBtn.Name = "AddCategoryBtn";
             AddCategoryBtn.Size = new Size(404, 61);
@@ -102,7 +111,10 @@
             // 
             // AddSubcategoryBtn
             // 
-            AddSubcategoryBtn.Location = new Point(489, 586);
+            AddSubcategoryBtn.FlatAppearance.BorderSize = 0;
+            AddSubcategoryBtn.FlatStyle = FlatStyle.Flat;
+            AddSubcategoryBtn.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            AddSubcategoryBtn.Location = new Point(452, 586);
             AddSubcategoryBtn.Name = "AddSubcategoryBtn";
             AddSubcategoryBtn.Size = new Size(404, 61);
             AddSubcategoryBtn.TabIndex = 7;
@@ -114,7 +126,8 @@
             // 
             AutoScaleDimensions = new SizeF(15F, 38F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(919, 917);
+            BackColor = Color.FromArgb(45, 66, 91);
+            ClientSize = new Size(885, 666);
             Controls.Add(AddSubcategoryBtn);
             Controls.Add(AddCategoryBtn);
             Controls.Add(SubcategoriesLbx);

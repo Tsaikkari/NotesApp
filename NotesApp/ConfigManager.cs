@@ -10,7 +10,7 @@ namespace NotesApp
 {
     public static class ConfigManager
     {
-        public static JObject LoadStyleDonfig()
+        public static JObject LoadStyleConfig()
         {
             if (File.Exists("StyleConfig.json"))
             {
