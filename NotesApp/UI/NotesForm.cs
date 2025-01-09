@@ -439,33 +439,5 @@ namespace NotesApp.UI
                 MessageBox.Show("Error while creating file.");
             }
         }
-
-        // TODO: button for making his optional
-        private void NotesGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            foreach (DataGridViewRow row in NotesGrid.Rows)
-            {
-                decimal knowledgeLevel = Convert.ToDecimal(row.Cells[5].Value);
-                if (knowledgeLevel == 1)
-                    row.DefaultCellStyle.BackColor = Color.Red;
-                else if (knowledgeLevel == 2)
-                    row.DefaultCellStyle.BackColor = Color.Orange;
-                else if (knowledgeLevel == 3)
-                    row.DefaultCellStyle.BackColor = Color.Yellow;
-                else if (knowledgeLevel == 4)
-                    row.DefaultCellStyle.BackColor = Color.Green;
-                else if (knowledgeLevel == 5)
-                    row.DefaultCellStyle.BackColor = Color.Turquoise;
-                else if (knowledgeLevel == 6)
-                    row.DefaultCellStyle.BackColor = Color.Blue;
-                else if (knowledgeLevel == 7)
-                    row.DefaultCellStyle.BackColor = Color.Purple;
-                else
-                {
-                    row.DefaultCellStyle.BackColor = Color.White;
-                    row.DefaultCellStyle.ForeColor = Color.Black;
-                }     
-            }
-        }
     }
 }

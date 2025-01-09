@@ -58,7 +58,6 @@
             NotesGrid.Size = new Size(1060, 661);
             NotesGrid.TabIndex = 0;
             NotesGrid.CellClick += NotesGrid_CellClick;
-            NotesGrid.CellFormatting += NotesGrid_CellFormatting;
             // 
             // NewNoteBtn
             // 
