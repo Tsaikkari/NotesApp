@@ -42,16 +42,16 @@ namespace NotesApp.UI
 
         private async void RefreshCategoryList()
         {
-            _categories = await _categoriesRepository.SelectCategories();
             await _categoriesCache.RefreshData();
+            _categories = await _categoriesRepository.SelectCategories();
             CategoriesLbx.DataSource = _categories;
             CategoriesLbx.DisplayMember = "Name";
         }
 
         private async void RefreshSubcategoryList()
         {
-            _subcategories = await _subcategoriesRepository.SelectSubcategories();
             await _categoriesCache.RefreshData();
+            _subcategories = await _subcategoriesRepository.SelectSubcategories();
             SubcategoriesLbx.DataSource = _subcategories;
             SubcategoriesLbx.DisplayMember = "Name";
         }

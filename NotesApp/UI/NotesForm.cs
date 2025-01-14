@@ -63,6 +63,10 @@ namespace NotesApp.UI
         {
             _notesCache = await _notesRepository.SelectNotes();
             FilterGridData();
+            await _categoriesCache.RefreshData();
+            FilterCategories();
+            FilterSubcategories();
+            
         }
 
         private void FilterCategories()
