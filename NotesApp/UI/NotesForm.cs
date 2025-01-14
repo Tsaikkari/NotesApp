@@ -59,7 +59,7 @@ namespace NotesApp.UI
             MessageBox.Show(errorMessage);
         }
 
-        private async void RefreshNotesCache()
+        private async void RefreshCaches()
         {
             _notesCache = await _notesRepository.SelectNotes();
             FilterGridData();
@@ -200,7 +200,7 @@ namespace NotesApp.UI
                 if (NotesGrid.CurrentCell.OwningColumn.Name == "DeleteBtn")
                 {
                     await _notesRepository.DeleteNote(clickedNote.Id);
-                    RefreshNotesCache();
+                    RefreshCaches();
                     ClearNote();
                     ToFileBtn.Visible = false;
                 }
@@ -213,7 +213,7 @@ namespace NotesApp.UI
                     form.LevelOfKnowledge = clickedNote.LevelOfKnowledge;
                     form.CatName = clickedNote.Category;
                     form.SubcatName = clickedNote.Subcategory;
-                    form.FormClosed += (sender, e) => RefreshNotesCache();
+                    form.FormClosed += (sender, e) => RefreshCaches();
                     form.ShowDialog();
                 }
                 else if (NotesGrid.CurrentCell.OwningColumn.Name == "TitleBtn")
@@ -233,7 +233,7 @@ namespace NotesApp.UI
             await _categoriesCache.RefreshData();
             FilterCategories();
             FilterSubcategories();
-            RefreshNotesCache();
+            RefreshCaches();
             ToFileBtn.Visible = false;
         }
 
@@ -297,7 +297,7 @@ namespace NotesApp.UI
         {
             noteToEditId = 0;
             CreateOrEditNoteForm form = _serviceProvider.GetService<CreateOrEditNoteForm>();
-            form.FormClosed += (sender, e) => RefreshNotesCache();
+            form.FormClosed += (sender, e) => RefreshCaches();
             form.ShowDialog();
         }
 
@@ -336,7 +336,7 @@ namespace NotesApp.UI
                 Note noteToEdit = new Note(NoteTitleLbl.Text, note.CategoryId, note.SubcategoryId, NoteTxt.Text, KnowledgeLevelNum.Value, noteToEditId);
 
                 await _notesRepository.UpdateNote(noteToEdit);
-                RefreshNotesCache();
+                RefreshCaches();
 
                 noteToEditId = 0;
             }
